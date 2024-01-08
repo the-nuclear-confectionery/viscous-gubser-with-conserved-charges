@@ -79,6 +79,7 @@ def solve_and_plot(
         xs: ndarray,
         e_freezeout: float,
         q: float,
+        colors: List[str],
 ) -> None:
     soln_1 = odeint(eom, y0s, rhos_1)
     soln_2 = odeint(eom, y0s, rhos_2)
@@ -93,7 +94,7 @@ def solve_and_plot(
 
     e_interp = interp1d(rhos, energy(t_hat, mu_hat))
 
-    skip_size = 10 
+    skip_size = 10
     freezeout_times = zeros((xs.size, 2))
     normal_vectors = zeros((xs.size // skip_size, 2))
     arrows = zeros((xs.size // skip_size,), dtype=FancyArrow)
@@ -109,7 +110,7 @@ def solve_and_plot(
     ax.scatter(
         freezeout_times[:, 0],
         freezeout_times[:, 1],
-        color='red',
+        color=colors[0],
         s=1.0
     )
 
@@ -148,7 +149,8 @@ def solve_and_plot(
             x=x,
             y=tau_FO,
             dx=normal_vectors[i, 0],
-            dy=normal_vectors[i, 1]
+            dy=normal_vectors[i, 1],
+            color=colors[1]
         )
 
 
@@ -157,7 +159,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(figsize=(7, 7))
     fig.patch.set_facecolor('white')
 
-    y0s = array([1.2, 1.2, 0])
+    y0s = array([1.2, 2.4, 0])
     rhos_1 = linspace(-30, 0, 1000)[::-1]
     rhos_2 = linspace(0, 30, 1000)
     xs = linspace(0, 6, 1000)
@@ -170,6 +172,23 @@ if __name__ == "__main__":
         xs=xs,
         e_freezeout=1.0 / HBARC,
         q=1,
+        colors=['red', 'black'],
+    )
+
+    y0s = array([1.2, 1e-20, 0])
+    rhos_1 = linspace(-30, 0, 1000)[::-1]
+    rhos_2 = linspace(0, 30, 1000)
+    xs = linspace(0, 6, 1000)
+
+    solve_and_plot(
+        ax=ax,
+        y0s=y0s,
+        rhos_1=rhos_1,
+        rhos_2=rhos_2,
+        xs=xs,
+        e_freezeout=1.0 / HBARC,
+        q=1,
+        colors=['blue', 'gray']
     )
 
     costumize_axis(

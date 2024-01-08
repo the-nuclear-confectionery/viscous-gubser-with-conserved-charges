@@ -11,17 +11,21 @@ import matplotlib.pyplot as plt
 from my_plotting import costumize_axis
 
 from equations_of_motion import eom
+from equations_of_motion import energy
+from equations_of_motion import number
 
 from variable_conversions import milne_T
 from variable_conversions import milne_mu
 from variable_conversions import milne_pi
+from variable_conversions import rho
+from variable_conversions import HBARC
 
 from typing import List
 
-T_PLOT = (0, 0)
-MU_PLOT = (0, 1)
-PIXX_PLOT = (1, 0)
-PIXY_PLOT = (1, 1)
+T_PLOT = (0,)
+MU_PLOT = (1,)
+PIXX_PLOT = (2,)
+PIXY_PLOT = (3,)
 
 def solve_and_plot(
         ax: plt.Axes,
@@ -46,11 +50,13 @@ def solve_and_plot(
     pi_interp = interp1d(rhos, pi_bar_hat)
 
     for n, tau in enumerate(taus):
-        ax[T_PLOT].plot(xs, milne_T(tau, xs, 1, t_interp),
+        ax[T_PLOT].plot(xs, 
+                        milne_T(tau, xs, 1, t_interp),
                         color=color[n], lw=2, ls=linestyle[n],
                         label=r'$\tau='+f'{tau:.2f}$ [fm/c]'
                         if add_labels else None)
-        ax[MU_PLOT].plot(xs, milne_mu(tau, xs, 1, mu_interp),
+        ax[MU_PLOT].plot(xs,
+                         milne_mu(tau, xs, 1, mu_interp),
                         color=color[n], lw=2, ls=linestyle[n])
 
         pi_xx, pi_yy, pi_xy, pi_nn = milne_pi(tau, xs, xs, 1, t_interp, mu_interp, pi_interp)
@@ -59,7 +65,7 @@ def solve_and_plot(
 
 
 if __name__ == "__main__":
-    fig, ax = plt.subplots(ncols=2, nrows=2, figsize=(2 * 7, 2 * 7))
+    fig, ax = plt.subplots(ncols=4, nrows=1, figsize=(4 * 7, 1 * 7))
     fig.patch.set_facecolor('white')
 
     y0s = array([1.2, 2.4, 0])
@@ -95,7 +101,6 @@ if __name__ == "__main__":
         linestyle=['dashed', 'dashed', 'dashed']
     )
 
-    
     costumize_axis(
         ax=ax[T_PLOT],
         x_title=r'$x$ [fm]',
@@ -117,6 +122,6 @@ if __name__ == "__main__":
         y_title=r'$\pi^{xy}(\tau, x)$ [GeV/fm$^{-3}$]'
     )
 
-    ax[T_PLOT].legend(fontsize=20)
+    ax[T_PLOT].legend(loc='upper right', fontsize=20)
     fig.tight_layout()
     fig.savefig('./viscous-gubser-current-soln.pdf')

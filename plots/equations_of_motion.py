@@ -6,14 +6,13 @@ from numpy import pi
 from numpy import array
 
 from typing import Union
-from typing import Optional
 
 # Note on the the units: everything is expected to be in units fm
 
 ALPHA = 3 * pi ** 2 * (16 + 105 / 4) / 90
 CTAUR = 5
 ETA_S = 0.2
-AA = 1
+AA = 1.0 / 3.0
 
 # the equations of state stuff
 def pressure(
@@ -28,7 +27,7 @@ def energy(
         temperature: float,
         chem_potential: float,
 ) -> float:
-    return_value = 3 * temperature ** 4 * cosh(chem_potential / temperature)
+    return_value = temperature ** 4 * cosh(chem_potential / temperature)
     return ALPHA * return_value
 
 
@@ -42,6 +41,15 @@ def entropy(
         chem_potential * sinh(chem_potential / temperature)
     )
     return ALPHA * return_value
+
+
+def number(
+        temperature: float,
+        chem_potential: float,
+) -> float:
+    return_value = AA * temperature ** 3 * sinh(chem_potential / temperature)
+    return ALPHA * return_value
+
 
 def tau_R(
         temperature: float,
