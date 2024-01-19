@@ -21,10 +21,10 @@ from typing import List
 from typing import Callable
 from typing import Union
 
-T_PLOT = (0, 0)
-MU_PLOT = (0, 1)
-PIXX_PLOT = (1, 0)
-PIXY_PLOT = (1, 1)
+T_PLOT = (0,)
+MU_PLOT = (1,)
+PIXX_PLOT = (2,)
+PIXY_PLOT = (3,)
 
 def solve_and_plot(
         ax: plt.Axes,
@@ -63,7 +63,7 @@ def solve_and_plot(
 
 
 if __name__ == "__main__":
-    fig, ax = plt.subplots(ncols=2, nrows=2, figsize=(2 * 7, 2 * 7))
+    fig, ax = plt.subplots(ncols=4, nrows=1, figsize=(4 * 7, 1 * 7))
     fig.patch.set_facecolor('white')
 
     y0s = array([1.2, 2.4, 0])
