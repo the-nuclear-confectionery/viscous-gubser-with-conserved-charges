@@ -3,12 +3,14 @@ from numpy import sinh
 from numpy import arcsinh
 from numpy import arctanh
 from numpy import sqrt
+from numpy import fabs
 
 from scipy.interpolate import interp1d
 
 from typing import Union
 
 from equations_of_motion import energy
+from equations_of_motion import number
 from equations_of_motion import pressure
 
 HBARC = 0.19733
@@ -74,6 +76,50 @@ def milne_mu(
     return HBARC * ads_mu(rho(tau, r, q)) / tau
 
 
+def milne_energy(
+        tau: float,
+        x: Union[float, ndarray],
+        y: Union[float, ndarray],
+        q: float,
+        ads_T: interp1d,
+        ads_mu: interp1d,
+        tol: float = 1e-12,
+) -> Union[float, ndarray]:
+    r = sqrt(x ** 2 + y ** 2)
+    rh = rho(tau, r, q)
+    temp = ads_T(rh)
+    mu = ads_mu(rh)
+
+    if temp <= tol:
+        temp = tol
+    if mu <= tol:
+        temp = tol
+    e = HBARC * energy(temperature=temp, chem_potential=mu) / tau ** 4
+    return tol if e < tol else e
+
+
+def milne_number(
+        tau: float,
+        x: Union[float, ndarray],
+        y: Union[float, ndarray],
+        q: float,
+        ads_T: interp1d,
+        ads_mu: interp1d,
+        tol: float = 1e-12,
+) -> Union[float, ndarray]:
+    r = sqrt(x ** 2 + y ** 2)
+    rh = rho(tau, r, q)
+    temp = ads_T(rh)
+    mu = ads_mu(rh)
+
+    if temp <= tol:
+        temp = tol
+    if mu <= tol:
+        temp = tol
+    n = number(temperature=temp, chem_potential=mu) / tau ** 3
+    return tol if n < tol else n
+
+
 def milne_pi(
         tau: float,
         x: Union[float, ndarray],
@@ -82,18 +128,30 @@ def milne_pi(
         ads_T: interp1d,
         ads_mu: interp1d,
         ads_pi_bar_hat: interp1d,
+        tol: float = 1e-12,
 ) -> float:
     r = sqrt(x ** 2 + y ** 2)
-    t = ads_T(rho(tau, r, q))
+    temp = ads_T(rho(tau, r, q))
     mu = ads_mu(rho(tau, r, q))
-    e = energy(temperature=t, chem_potential=mu)
-    p = pressure(temperature=t, chem_potential=mu)
+
+    if temp <= tol:
+        temp = tol
+    if mu <= tol:
+        temp = tol
+
+    e = energy(temperature=temp, chem_potential=mu)
+    p = pressure(temperature=temp, chem_potential=mu)
 
     pi_hat = HBARC * (e + p) * ads_pi_bar_hat(rho(tau, r, q)) 
     pi_nn = pi_hat / tau ** 6
-    pi_xx = -0.5 * (1 + u_x(tau, x, 0, q) ** 2) * pi_hat / tau ** 4
-    pi_yy = -0.5 * (1 + u_y(tau, x, 0, q) ** 2) * pi_hat / tau ** 4
-    pi_xy = -0.5 * u_x(tau, x, x, q) * u_y(tau, x, x, q) * pi_hat / tau ** 4
+    pi_xx = -0.5 * (1 + u_x(tau, x, y, q) ** 2) * pi_hat / tau ** 4
+    pi_yy = -0.5 * (1 + u_y(tau, x, y, q) ** 2) * pi_hat / tau ** 4
+    pi_xy = -0.5 * u_x(tau, x, y, q) * u_y(tau, x, y, q) * pi_hat / tau ** 4
+
+    pi_nn = tol if fabs(pi_nn) < tol else pi_nn
+    pi_xx = tol if fabs(pi_xx) < tol else pi_xx
+    pi_yy = tol if fabs(pi_yy) < tol else pi_yy
+    pi_xy = tol if fabs(pi_xy) < tol else pi_xy
 
     return [pi_xx, pi_yy, pi_xy, pi_nn]
     
