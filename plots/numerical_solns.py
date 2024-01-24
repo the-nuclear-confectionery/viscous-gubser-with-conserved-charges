@@ -91,13 +91,13 @@ def solve_and_plot(
                            pi_xy * HBARC ** 3 / (4.0 * e_evol / 3.0), 
                            color=color[n], lw=2, ls=linestyle[n])
 
-        ax_2[E_PLOT].plot(xs, e_evol / t_evol ** 4,
+        ax_2[E_PLOT].plot(xs, e_evol, #  / t_evol ** 4,
                         color=color[n], lw=2, ls=linestyle[n],
                         label=r'$\tau='+f'{tau:.2f}$ [fm/c]'
                         if add_labels else None)
-        ax_2[N_PLOT].plot(xs, n_evol / t_evol ** 3,
+        ax_2[N_PLOT].plot(xs, n_evol, #  / t_evol ** 3,
                         color=color[n], lw=2, ls=linestyle[n])
-        ax_2[S_PLOT].plot(xs, s_evol / t_evol ** 3,
+        ax_2[S_PLOT].plot(xs, s_evol, #  / t_evol ** 3,
                         color=color[n], lw=2, ls=linestyle[n])
 
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     fig2, ax2 = plt.subplots(ncols=1, nrows=3, figsize=(1 * 7, 3 * 7))
 
 
-    y0s = array([1.2, 1e-20, 0])
+    y0s = array([1.2, 1e-20, 1.5])
     rhos_1 = linspace(-10, 0, 1000)[::-1]
     rhos_2 = linspace(0, 10, 1000)
     xs = linspace(-6, 6, 200)
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         second_label=r'$\mu_0/T_0=0.0$'
     )
 
-    y0s = array([1.2, 2 * 1.2, 0.0])
+    y0s = array([1.2, 2 * 1.2, 1.5])
     rhos_1 = linspace(-10, 0, 1000)[::-1]
     rhos_2 = linspace(0, 10, 1000)
     xs = linspace(-6, 6, 200)
@@ -166,6 +166,11 @@ if __name__ == "__main__":
         y_title=r'$\pi^{xy}(\tau, x) / h(\tau, x)$'
     )
 
+    ax[T_PLOT].legend(loc='upper right', fontsize=20)
+    ax[MU_PLOT].legend(loc='upper right', fontsize=20)
+    fig.tight_layout()
+    fig.savefig('./viscous-gubser-current-soln-1.pdf')
+
 
     costumize_axis(
         ax=ax2[E_PLOT],
@@ -184,11 +189,6 @@ if __name__ == "__main__":
         x_title=r'$x$ [fm]',
         y_title=r'$s(\tau, x) / T(\tau, x)^3$'
     )
-
-    ax[T_PLOT].legend(loc='upper right', fontsize=20)
-    ax[MU_PLOT].legend(loc='upper right', fontsize=20)
-    fig.tight_layout()
-    fig.savefig('./viscous-gubser-current-soln-1.pdf')
 
     ax2[E_PLOT].legend(loc='upper right', fontsize=20)
     fig2.tight_layout()

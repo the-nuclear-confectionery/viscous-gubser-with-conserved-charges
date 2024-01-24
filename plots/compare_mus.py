@@ -28,6 +28,10 @@ MU_PLOT = (0, 1,)
 PIXX_PLOT = (1, 0)
 PIXY_PLOT = (1, 1)
 
+E_PLOT = (0)
+N_PLOT = (1,)
+S_PLOT = (2,)
+
 def solve_and_plot(
         ax_1: plt.Axes,
         ax_2: plt.Axes,
@@ -61,9 +65,12 @@ def solve_and_plot(
 
         ax_1[T_PLOT].plot(xs, t_evol,
                         color=color[n], lw=2, ls=linestyle[n],
-                        label=r'$\mu/T='+f'{y0s[1]/y0s[0]:.1f}$')
+                        label=r'$\mu/T='+f'{y0s[1]/y0s[0]:.1f}$'
+                        if n == 0 else None)
         ax_1[MU_PLOT].plot(xs, mu_evol,
-                        color=color[n], lw=2, ls=linestyle[n])
+                           color=color[n], lw=2, ls=linestyle[n],
+                           label=r'$\tau = '+f'{tau:.2f}' + r'$ [fm/$c$]'
+                           if add_labels else None)
 
         pi_xx, pi_yy, pi_xy, pi_nn = milne_pi(
             tau,
@@ -84,11 +91,41 @@ def solve_and_plot(
                            pi_xy * HBARC ** 3 / (4.0 * e_evol / 3.0), 
                            color=color[n], lw=2, ls=linestyle[n])
         
+        
+        ax_2[E_PLOT].plot(xs, e_evol, #  / t_evol ** 4,
+                          color=color[n], lw=2, ls=linestyle[n],
+                          label=r'$\mu_0/T_0='+f'{y0s[1]/y0s[0]:.1f}$'
+                          if n == 0 else None)
+        ax_2[N_PLOT].plot(xs, n_evol, #  / t_evol ** 3,
+                        color=color[n], lw=2, ls=linestyle[n],
+                        label=r'$\tau='+f'{tau:.2f}$ [fm/$c$]'
+                        if add_labels else None)
+        ax_2[S_PLOT].plot(xs, s_evol, #  / t_evol ** 3,
+                        color=color[n], lw=2, ls=linestyle[n])
+        
 if __name__ == "__main__":
     fig, ax = plt.subplots(ncols=2, nrows=2, figsize=(2 * 7, 2 * 7))
     fig.patch.set_facecolor('white')
 
-    fig2, ax2 = plt.subplots(ncols=1, nrows=3, figsize=(1 * 7, 3 * 7))
+    fig2, ax2 = plt.subplots(ncols=3, nrows=1, figsize=(3 * 7, 1 * 7))
+
+    y0s = array([1.2, 1e-20 * 1.2, 0.0])
+    rhos_1 = linspace(-10, 0, 1000)[::-1]
+    rhos_2 = linspace(0, 10, 1000)
+    xs = linspace(-6, 6, 200)
+
+    solve_and_plot(
+        ax_1=ax,
+        ax_2=ax2,
+        y0s=y0s,
+        rhos_1=rhos_1,
+        rhos_2=rhos_2,
+        xs=xs,
+        taus=array([1.2, 2.0, 3.0]),
+        color=3 * ['black'],
+        linestyle=['solid', 'dashed', 'dotted'],
+        add_labels=True,
+    )
 
     y0s = array([1.2, 1 * 1.2, 0.0])
     rhos_1 = linspace(-10, 0, 1000)[::-1]
@@ -102,10 +139,9 @@ if __name__ == "__main__":
         rhos_1=rhos_1,
         rhos_2=rhos_2,
         xs=xs,
-        taus=array([1.2]),
-        color=['black'],
-        linestyle=['solid'],
-        add_labels=True,
+        taus=array([1.2, 2.0, 3.0]),
+        color=3 * ['grey'],
+        linestyle=['solid', 'dashed', 'dotted'],
     )
 
     y0s = array([1.2, 2 * 1.2, 0])
@@ -120,9 +156,9 @@ if __name__ == "__main__":
         rhos_1=rhos_1,
         rhos_2=rhos_2,
         xs=xs,
-        taus=array([1.2]),
-        color=['red'],
-        linestyle=['dashed']
+        taus=array([1.2, 2.0, 3.0]),
+        color=3 * ['red'],
+        linestyle=['solid', 'dashed', 'dotted']
     )
 
     y0s = array([1.2, 3 * 1.2, 0])
@@ -137,9 +173,9 @@ if __name__ == "__main__":
         rhos_1=rhos_1,
         rhos_2=rhos_2,
         xs=xs,
-        taus=array([1.2]),
-        color=['blue'],
-        linestyle=['dotted']
+        taus=array([1.2, 2.0, 3.0]),
+        color=3 * ['blue'],
+        linestyle=['solid', 'dashed', 'dotted']
     )
 
     costumize_axis(
@@ -155,14 +191,44 @@ if __name__ == "__main__":
     costumize_axis(
         ax=ax[PIXX_PLOT],
         x_title=r'$x$ [fm]',
-        y_title=r'$\pi^{yy}(\tau, x) / h(\tau, x)$'
+        y_title=r'$\pi^{yy}(\tau, x) / w(\tau, x)$'
     )
     costumize_axis(
         ax=ax[PIXY_PLOT],
         x_title=r'$x$ [fm]',
-        y_title=r'$\pi^{xy}(\tau, x) / h(\tau, x)$'
+        y_title=r'$\pi^{xy}(\tau, x) / w(\tau, x)$'
     )
 
     ax[T_PLOT].legend(loc='upper right', fontsize=20)
+    ax[MU_PLOT].legend(loc='upper right', fontsize=20)
     fig.tight_layout()
-    fig.savefig('./viscous-gubser-current-comp-mus.pdf')
+    fig.savefig('./viscous-gubser-current-comp-mus-1.pdf')
+
+
+    costumize_axis(
+        ax=ax2[E_PLOT],
+        x_title=r'$x$ [fm]',
+        # y_title=r'$\mathcal E(\tau, x)/T(\tau, x)^4$'
+        y_title=r'$\mathcal E(\tau, x)$ [GeV/fm$^{-3}$]'
+    )
+    ax2[E_PLOT].set_yscale('log')
+    costumize_axis(
+        ax=ax2[N_PLOT],
+        x_title=r'$x$ [fm]',
+        # y_title=r'$n(\tau, x)/T(\tau, x)^3$'
+        y_title=r'$n(\tau, x)$ [fm$^{-3}$]'
+    )
+    ax2[N_PLOT].set_yscale('log')
+    ax2[N_PLOT].set_ylim(bottom=1e-4)
+    costumize_axis(
+        ax=ax2[S_PLOT],
+        x_title=r'$x$ [fm]',
+        y_title=r'$s(\tau, x)$ [fm$^{-3}$]'
+        # y_title=r'$s(\tau, x) / T(\tau, x)^3$'
+    )
+    ax2[S_PLOT].set_yscale('log')
+
+    ax2[E_PLOT].legend(loc='upper right', fontsize=20)
+    ax2[N_PLOT].legend(loc='upper right', fontsize=20)
+    fig2.tight_layout()
+    fig2.savefig('./viscous-gubser-current-comp-mus-2.pdf')
