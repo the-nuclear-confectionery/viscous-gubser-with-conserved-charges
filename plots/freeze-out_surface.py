@@ -53,7 +53,8 @@ def find_freezeout_tau(
         q: float,
 ) -> float:
     return newton(
-        lambda tau: e_freezeout - e_interp(rho(tau, r, q)) / tau ** 4,
+        lambda tau: 
+            e_freezeout - e_interp(rho(tau, r, q)) / tau ** 4,
         x0=0.1,
         x1=0.2,
     )
@@ -452,9 +453,9 @@ if __name__ == "__main__":
     fig.patch.set_facecolor('white')
 
     y0s = array([1.2, 3 * 1.2, 0.0])
-    rhos_1 = linspace(-10, 0, 1000)[::-1]
-    rhos_2 = linspace(0, 10, 1000)
-    xs = linspace(0, 6, 1000)
+    rhos_1 = linspace(-30, 0, 3000)[::-1]
+    rhos_2 = linspace(0, 30, 3000)
+    xs = linspace(0, 10, 1000)
 
 
     heat_map = solve_and_plot(

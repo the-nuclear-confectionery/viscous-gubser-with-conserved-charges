@@ -42,13 +42,13 @@ class Config:
         with open('run.cfg', 'r') as f:
             lines = f.readlines()
             for line in lines:
-                key, value = line.split()
+                key, value = line.split()[:2]
                 if key == 'tau_0':
                     self.tau_0 = float(value)
                 elif key == 'tau_f':
                     self.tau_f = float(value)
                 elif key == 'tau_step':
-                    self.tau_step == float(value)
+                    self.tau_step = float(value)
                 elif key == 'temp_0':
                     self.temp_0 = float(value)
                 elif key == 'mu_0':
@@ -93,13 +93,19 @@ if __name__ == "__main__":
     # Write header
     dir_name = f'tau0={cfg.tau_0:.2f}_T0={cfg.temp_0:.2f}_mu0={cfg.mu_0:.2f}_pi0={cfg.pi_0:.2f}'
     dir_path = Path(dir_name).absolute()
-    os.mkdir(dir_path)
-    file_name = f'{dir_name}/init_conditions.txt'
-    path = Path(cfg.output_dir).absolute() / file_name
-    with open(str(path), 'w') as f:
-        f.write(f'#0 {stepx} {stepy} {stepEta} 0 {xmin} {ymin} {etamin}\n')
 
-        for tau in arange(cfg.tau_0, cfg.tau_f, cfg.tau_step):
+    try:
+        os.mkdir(dir_path)
+    except (FileExistsError):
+        pass
+
+
+    for tau in linspace(cfg.tau_0, cfg.tau_f, int((cfg.tau_f - cfg.tau_0) / cfg.tau_step) + 1):
+        file_name = f'{dir_name}/tau={tau:.2f}.txt'
+        path = Path(cfg.output_dir).absolute() / file_name
+        with open(str(path), 'w') as f:
+            f.write(f'#0 {stepx} {stepy} {stepEta} 0 {xmin} {ymin} {etamin}\n')
+
             for x in arange(xmin, xmax, stepx):
                 for y in arange(ymin, ymax, stepy):
                     pis = milne_pi(tau, x, y, 1.0, t_interp, mu_interp, pi_interp, cfg.tol)

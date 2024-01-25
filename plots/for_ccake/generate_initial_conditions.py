@@ -94,7 +94,12 @@ if __name__ == "__main__":
     # Write header
     dir_name = f'tau0={cfg.tau_0:.2f}_T0={cfg.temp_0:.2f}_mu0={cfg.mu_0:.2f}_pi0={cfg.pi_0:.2f}'
     dir_path = Path(dir_name).absolute()
-    os.mkdir(dir_path)
+
+    try:
+        os.mkdir(dir_path)
+    except (FileExistsError):
+        pass
+
     file_name = f'{dir_name}/init_conditions.txt'
     path = Path(file_name).absolute()
     with open(str(path), 'w') as f:
