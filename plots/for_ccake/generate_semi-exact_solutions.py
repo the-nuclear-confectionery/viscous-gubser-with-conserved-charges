@@ -19,6 +19,7 @@ from variable_conversions import u_y
 from variable_conversions import milne_energy
 from variable_conversions import milne_number
 from variable_conversions import milne_pi
+from variable_conversions import HBARC
 
 from typing import List
 from typing import Optional
@@ -65,7 +66,13 @@ class Config:
 if __name__ == "__main__":
     cfg = Config()
 
-    y0s = array([cfg.temp_0, cfg.mu_0, cfg.pi_0])
+    # Config file gives things in the units indicated by the comments.
+    # Here we have to convert to the corresponding dimensionless variables
+    #   for de Sitter space
+    temp_0 = cfg.temp_0 * cfg.tau_0 / HBARC
+    mu_0 = cfg.mu_0 * cfg.tau_0 / HBARC
+    y0s = array([temp_0, mu_0, cfg.pi_0])
+
     rhos_1 = linspace(-10, 0, 1000)[::-1]
     rhos_2 = linspace(0, 10, 1000)
 
