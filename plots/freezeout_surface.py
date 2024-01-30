@@ -6,6 +6,7 @@ from numpy import linspace
 from numpy import ndarray
 from numpy import array
 from numpy import zeros
+from numpy import zeros_like
 from numpy import concatenate
 from numpy import sqrt
 from numpy import tanh
@@ -13,12 +14,14 @@ from numpy import fmin
 from numpy import fmax
 from numpy import exp
 from numpy import log
+from numpy import sum as npsum
+from numpy import isnan
 
 import matplotlib.pyplot as plt
 
 from matplotlib.cm import copper
 from matplotlib.cm import plasma
-from matplotlib.cm import plasma
+from matplotlib.cm import viridis
 from matplotlib.cm import coolwarm
 from matplotlib.cm import get_cmap
 from matplotlib.cm import ScalarMappable
@@ -129,6 +132,7 @@ def find_color_indices(
 def do_freezeout_surfaces(
         rhos_1: ndarray,
         rhos_2: ndarray,
+        xs: ndarray,
         T0: float,
         pi0: float,
         e_freezeout: float,
@@ -162,7 +166,7 @@ def do_freezeout_surfaces(
     min_tau = 1e99
     max_tau = -1e99
 
-    for k, alpha in enumerate([1e-20, 1, 2, 3]):
+    for k, alpha in enumerate([1e-20, 1.5, 3]):
         y0s = [T0, alpha * T0, pi0]
         soln_1 = odeint(eom, y0s, rhos_1)
         soln_2 = odeint(eom, y0s, rhos_2)
@@ -280,6 +284,7 @@ def solve_and_plot(
         fo_entropies, fo_normals = do_freezeout_surfaces(
         rhos_1=rhos_1,
         rhos_2=rhos_2,
+        xs=xs,
         T0=y0s[0],
         pi0=y0s[2],
         skip_size=skip_size,
@@ -288,7 +293,7 @@ def solve_and_plot(
         q=q,
     )
 
-    evol_taus_log = linspace(log(0.01),  log(3), 100)
+    evol_taus_log = linspace(log(0.01),  log(3), 1000)
     evol_taus = exp(evol_taus_log)
 
     xis = [1e-20, 1, 2, 3]
@@ -354,19 +359,19 @@ def solve_and_plot(
         x_FOs = freezeout_times[:, 0]
         tau_FOs = freezeout_times[:, 1]
 
-        taus = tau_FOs
-        cmap = get_cmap(plasma, taus.size)
-        if update_color_bar and itr == 1:
-            tau0 = evol_taus[0]
-            tauf = evol_taus[-1]
-            norm = Normalize(vmin=tau0, vmax=tauf)
-            sm = ScalarMappable(norm=norm, cmap=cmap)                        
-            cax = fig.colorbar(sm, ax=ax[1], orientation='vertical', pad=0.01,
-                            format='%.2f').ax
-            cax.yaxis.set_ticks(linspace(tau0, tauf, 7))
-            for t in cax.get_yticklabels():
-                t.set_fontsize(18)
-            cax.set_ylabel(r'$\tau$ [fm/$c$]', fontsize=20)
+        # taus = tau_FOs
+        # cmap = get_cmap(plasma, taus.size)
+        # if update_color_bar and itr == 1:
+        #     tau0 = evol_taus[0]
+        #     tauf = evol_taus[-1]
+        #     norm = Normalize(vmin=tau0, vmax=tauf)
+        #     sm = ScalarMappable(norm=norm, cmap=cmap)                        
+        #     cax = fig.colorbar(sm, ax=ax[1], orientation='vertical', pad=0.01,
+        #                     format='%.2f').ax
+        #     cax.yaxis.set_ticks(linspace(tau0, tauf, 7))
+        #     for t in cax.get_yticklabels():
+        #         t.set_fontsize(18)
+        #     cax.set_ylabel(r'$\tau$ [fm/$c$]', fontsize=20)
                 
         xi = xis[itr]
         ys = [y0s[0], xi * y0s[0], y0s[2]]
@@ -381,23 +386,23 @@ def solve_and_plot(
         s_interp = interp1d(rhos, entropy(t_hat, mu_hat))
         n_interp = interp1d(rhos, number(t_hat, mu_hat))
 
-        for r0 in linspace(0.01, 1.0, 5):
+        rs = linspace(0.01, 1.0, 100)
+        evol_mus = zeros((rs.size, evol_taus.size))
+        evol_temps = zeros_like(evol_mus)
+        for nn, r0 in enumerate(rs):
             evol_xs = odeint(dx_dtau, array([r0, r0, 0]), exp(evol_taus_log), args=(1.0,))
             evol_rs = sqrt(evol_xs[:, 0] ** 2 + evol_xs[:, 1] ** 2)
+            evol_mus[nn] = milne_mu(evol_taus, evol_rs, 1.0, mu_interp)
+            evol_temps[nn] = milne_T(evol_taus, evol_rs, 1.0, t_interp)
 
-            ax[1].scatter(
-                milne_mu(evol_taus, evol_rs, 1.0, mu_interp), 
-                milne_T(evol_taus, evol_rs, 1.0, t_interp),
-                c=find_color_indices(
-                    min_s=evol_taus[0],
-                    max_s=evol_taus[-1],
-                    num_colors=evol_taus.size,
-                    s=evol_taus,
-                ),
-                s=3.0,
-                cmap=cmap,
-                norm=Normalize(vmin=0, vmax=evol_taus.size),
-            )
+        ax[1].hist2d(
+            evol_mus.reshape(-1,),
+            evol_temps.reshape(-1,),
+            bins=100,
+            cmap=[viridis, plasma][itr - 1],
+            norm='log',
+            alpha=1.0 / itr
+        )
 
         # ax[1].scatter(
         #     # milne_mu(taus, 0.0, 1.0, mu_interp), 
@@ -448,14 +453,14 @@ def solve_and_plot(
 # Plot the tau components and r components separately, to see which has the large change
 
 
-if __name__ == "__main__":
+def main():
     fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(3.0 * 7, 1 * 7))
     fig.patch.set_facecolor('white')
 
     y0s = array([1.2, 3 * 1.2, 0.0])
-    rhos_1 = linspace(-30, 0, 3000)[::-1]
-    rhos_2 = linspace(0, 30, 3000)
-    xs = linspace(0, 10, 1000)
+    rhos_1 = linspace(-10, 0, 1000)[::-1]
+    rhos_2 = linspace(0, 10, 1000)
+    xs = linspace(0, 6, 1000)
 
 
     heat_map = solve_and_plot(
@@ -551,7 +556,8 @@ if __name__ == "__main__":
     )
     ax[1].axhline(0.2, color='black')
     ax[1].text(1.0, 0.21, '$T=200$ MeV', fontsize=18)
-    ax[1].set_yscale('log')
+    ax[1].set_ylim(top=2)
+    # ax[1].set_yscale('log')
     # ax[1].text(0.1, 0.7, r'$\mu_0/T_0=1$', fontsize=18)
     # ax[1].text(0.65, 0.7, r'$\mu_0/T_0=2$', fontsize=18)
     # ax[1].text(1.05, 0.7, r'$\mu_0/T_0=3$', fontsize=18)
@@ -569,3 +575,7 @@ if __name__ == "__main__":
 
     fig.tight_layout()
     fig.savefig('./freeze-out-surface.pdf')
+
+
+if __name__ == "__main__":
+    main()
