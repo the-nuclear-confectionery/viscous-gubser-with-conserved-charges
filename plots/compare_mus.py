@@ -11,14 +11,13 @@ import matplotlib.pyplot as plt
 from my_plotting import costumize_axis
 
 from equations_of_motion import eom
-from equations_of_motion import energy
-from equations_of_motion import number
-from equations_of_motion import entropy
 
 from variable_conversions import milne_T
 from variable_conversions import milne_mu
 from variable_conversions import milne_pi
-from variable_conversions import rho
+from variable_conversions import milne_energy
+from variable_conversions import milne_number
+from variable_conversions import milne_entropy
 from variable_conversions import HBARC
 
 from typing import List
@@ -59,9 +58,9 @@ def solve_and_plot(
         t_evol = milne_T(tau, xs, 1, t_interp)
         mu_evol = milne_mu(tau, xs, 1, mu_interp)
 
-        e_evol = energy(t_evol, mu_evol)  # / HBARC ** 3
-        n_evol = number(t_evol, mu_evol)  # / HBARC ** 3
-        s_evol = entropy(t_evol, mu_evol)  # / HBARC ** 3
+        e_evol = milne_energy(tau, xs, 0.0, 1.0, t_interp, mu_interp)  
+        n_evol = milne_number(tau, xs, 0.0, 1.0, t_interp, mu_interp)  
+        s_evol = milne_entropy(tau, xs, 0.0, 1.0, t_interp, mu_interp) 
 
         ax_1[T_PLOT].plot(xs, t_evol,
                         color=color[n], lw=2, ls=linestyle[n],
@@ -75,20 +74,21 @@ def solve_and_plot(
         pi_xx, pi_yy, pi_xy, pi_nn = milne_pi(
             tau,
             xs, 
-            xs, 
+            0.0, 
             1, 
             t_interp, 
             mu_interp, 
-            pi_interp
+            pi_interp,
+            nonzero_xy=True,
         )
 
         ax_1[PIXX_PLOT].plot(xs, 
-                           pi_yy * HBARC ** 3 / (4.0 * e_evol / 3.0), 
+                           pi_yy / (4.0 * e_evol / 3.0), 
                            color=color[n], lw=2, ls=linestyle[n])
 
         # need to add code to calculate sigma^{xy}
         ax_1[PIXY_PLOT].plot(xs, 
-                           pi_xy * HBARC ** 3 / (4.0 * e_evol / 3.0), 
+                           pi_xy / (4.0 * e_evol / 3.0), 
                            color=color[n], lw=2, ls=linestyle[n])
         
         
@@ -103,7 +103,7 @@ def solve_and_plot(
         ax_2[S_PLOT].plot(xs, s_evol, #  / t_evol ** 3,
                         color=color[n], lw=2, ls=linestyle[n])
         
-if __name__ == "__main__":
+def main():
     fig, ax = plt.subplots(ncols=2, nrows=2, figsize=(2 * 7, 2 * 7))
     fig.patch.set_facecolor('white')
 
@@ -127,27 +127,7 @@ if __name__ == "__main__":
         add_labels=True,
     )
 
-    y0s = array([1.2, 1 * 1.2, 0.0])
-    rhos_1 = linspace(-10, 0, 1000)[::-1]
-    rhos_2 = linspace(0, 10, 1000)
-    xs = linspace(-6, 6, 200)
-
-    solve_and_plot(
-        ax_1=ax,
-        ax_2=ax2,
-        y0s=y0s,
-        rhos_1=rhos_1,
-        rhos_2=rhos_2,
-        xs=xs,
-        taus=array([1.2, 2.0, 3.0]),
-        color=3 * ['grey'],
-        linestyle=['solid', 'dashed', 'dotted'],
-    )
-
-    y0s = array([1.2, 2 * 1.2, 0])
-    rhos_1 = linspace(-10, 0, 1000)[::-1]
-    rhos_2 = linspace(0, 10, 1000)
-    xs = linspace(-6, 6, 200)
+    y0s = array([1.2, 1.5 * 1.2, 0.0])
 
     solve_and_plot(
         ax_1=ax,
@@ -158,13 +138,10 @@ if __name__ == "__main__":
         xs=xs,
         taus=array([1.2, 2.0, 3.0]),
         color=3 * ['red'],
-        linestyle=['solid', 'dashed', 'dotted']
+        linestyle=['solid', 'dashed', 'dotted'],
     )
 
     y0s = array([1.2, 3 * 1.2, 0])
-    rhos_1 = linspace(-10, 0, 1000)[::-1]
-    rhos_2 = linspace(0, 10, 1000)
-    xs = linspace(-6, 6, 200)
 
     solve_and_plot(
         ax_1=ax,
@@ -219,7 +196,7 @@ if __name__ == "__main__":
         y_title=r'$n(\tau, x)$ [fm$^{-3}$]'
     )
     ax2[N_PLOT].set_yscale('log')
-    ax2[N_PLOT].set_ylim(bottom=1e-4)
+    ax2[N_PLOT].set_ylim(bottom=1e-2)
     costumize_axis(
         ax=ax2[S_PLOT],
         x_title=r'$x$ [fm]',
@@ -232,3 +209,7 @@ if __name__ == "__main__":
     ax2[N_PLOT].legend(loc='upper right', fontsize=20)
     fig2.tight_layout()
     fig2.savefig('./viscous-gubser-current-comp-mus-2.pdf')
+
+
+if __name__ == "__main__":
+    main()
