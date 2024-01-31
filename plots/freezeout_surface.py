@@ -298,7 +298,7 @@ def solve_and_plot(
 
     xis = [1e-20, 1, 2, 3]
     shifts = array([0.0, 0.0, 1.0, 2.0]) / 100
-    colors=['black', 'gray', 'red', 'blue']
+    colors=['black', 'red', 'blue']
     linestyles = ['solid', 'dashed', 'dotted']
     for itr in range(len(fo_surfaces)):
         freezeout_times = fo_surfaces[itr]

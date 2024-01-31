@@ -64,7 +64,7 @@ def solve_and_plot(
 
         ax_1[T_PLOT].plot(xs, t_evol,
                         color=color[n], lw=2, ls=linestyle[n],
-                        label=r'$\mu/T='+f'{y0s[1]/y0s[0]:.1f}$'
+                        label=r'$\mu_0/T_0='+f'{y0s[1]/y0s[0]:.1f}$'
                         if n == 0 else None)
         ax_1[MU_PLOT].plot(xs, mu_evol,
                            color=color[n], lw=2, ls=linestyle[n],
