@@ -14,15 +14,12 @@ from numpy import fmin
 from numpy import fmax
 from numpy import exp
 from numpy import log
-from numpy import sum as npsum
-from numpy import isnan
 
 import matplotlib.pyplot as plt
 
 from matplotlib.cm import copper
 from matplotlib.cm import plasma
 from matplotlib.cm import viridis
-from matplotlib.cm import coolwarm
 from matplotlib.cm import get_cmap
 from matplotlib.cm import ScalarMappable
 
@@ -36,14 +33,12 @@ from my_plotting import costumize_axis
 from equations_of_motion import eom
 from equations_of_motion import energy
 from equations_of_motion import denergy_drho
-from equations_of_motion import entropy
-from equations_of_motion import number
 
 from variable_conversions import rho
 from variable_conversions import HBARC
 from variable_conversions import milne_T
 from variable_conversions import milne_mu
-
+from variable_conversions import milne_entropy
 from typing import List
 from typing import Union
 from typing import Tuple
@@ -56,7 +51,7 @@ def find_freezeout_tau(
         q: float,
 ) -> float:
     return newton(
-        lambda tau: 
+        lambda tau:
             e_freezeout - e_interp(rho(tau, r, q)) / tau ** 4,
         x0=0.1,
         x1=0.2,
@@ -76,19 +71,19 @@ def find_isentropic_temperature(
 def denergy_dtau(
         ys: ndarray,
         tau: float,
-        r:float,
+        r: float,
         q: float,
 ) -> float:
     temperature, chem_potenial, _ = ys
     derivative = 1 + q ** 2 * (r ** 2 + tau ** 2)
     derivative /= tau * sqrt(
-        1 
+        1
         +
         q ** 4 * (r ** 2 - tau ** 2) ** 2
         +
         2 * q ** 2 * (r ** 2 + tau ** 2)
     )
-    return_value = derivative * denergy_drho(ys, rho(tau, r, q)) * tau 
+    return_value = derivative * denergy_drho(ys, rho(tau, r, q)) * tau
     return_value -= 4.0 * energy(temperature=temperature, chem_potential=chem_potenial)
     return return_value / tau ** 5
 
@@ -106,19 +101,6 @@ def denergy_dr(
     return derivative * denergy_drho(ys, rho(tau, r, q)) / tau ** 4
 
 
-def milne_entropy(
-        taus: ndarray,
-        xs: ndarray,
-        q: float,
-        t_interp: interp1d,
-        mu_interp: interp1d,
-) -> ndarray:
-    ts = milne_T(taus, xs, 1, t_interp)
-    mus = milne_mu(taus, xs, 1, mu_interp)
-
-    return entropy(temperature=ts, chem_potential=mus)
-
-
 def find_color_indices(
         max_s: float,
         min_s: float,
@@ -134,6 +116,7 @@ def do_freezeout_surfaces(
         rhos_2: ndarray,
         xs: ndarray,
         T0: float,
+        mu0_T0_ratios: ndarray,
         pi0: float,
         e_freezeout: float,
         skip_size: int,
@@ -143,11 +126,11 @@ def do_freezeout_surfaces(
         float,
         float,
         float,
-        float, 
-        List[ndarray], 
-        List[ndarray], 
+        float,
+        List[ndarray],
+        List[ndarray],
         List[ndarray]
-    ]:
+]:
     # This function does a lot more work than it needs to...
     # returns:
     #   - min entropy at freezeout for all ICs
@@ -166,7 +149,7 @@ def do_freezeout_surfaces(
     min_tau = 1e99
     max_tau = -1e99
 
-    for k, alpha in enumerate([1e-20, 1.5, 3]):
+    for k, alpha in enumerate(mu0_T0_ratios):
         y0s = [T0, alpha * T0, pi0]
         soln_1 = odeint(eom, y0s, rhos_1)
         soln_2 = odeint(eom, y0s, rhos_2)
@@ -180,21 +163,16 @@ def do_freezeout_surfaces(
         pi_interp = interp1d(rhos, pi_hat)
 
         e_interp = interp1d(rhos, energy(t_hat, mu_hat))
-        n_interp = interp1d(rhos, number(t_hat, mu_hat))
-        s_interp = interp1d(rhos, entropy(t_hat, mu_hat))
-
-        rho_0 = rho(tau=1.2, r=0, q=1)
-        s_n = s_interp(rho_0) / n_interp(rho_0)
 
         freezeout_times = zeros((xs.size, 2))
 
         for i, x in enumerate(xs):
             freezeout_times[i] = [
-                x, 
+                x,
                 find_freezeout_tau(
                     e_interp, e_freezeout, x, q
                 )
-            ]  
+            ]
 
         list_FO_surfaces.append(freezeout_times)
         min_tau = min(fmin(freezeout_times[:, 1], min_tau))
@@ -202,11 +180,12 @@ def do_freezeout_surfaces(
 
         # some magic to make colorbars happen
         freezeout_s = milne_entropy(
-            taus=freezeout_times[:, 1],
-            xs=freezeout_times[:, 0],
+            tau=freezeout_times[:, 1],
+            x=freezeout_times[:, 0],
+            y=0.0,
             q=1.0,
-            t_interp=t_interp,
-            mu_interp=mu_interp,
+            ads_T=t_interp,
+            ads_mu=mu_interp,
         )
 
         list_FO_entropies.append(freezeout_s)
@@ -266,6 +245,7 @@ def solve_and_plot(
         fig: plt.Figure,
         ax: plt.Axes,
         y0s: ndarray,
+        mu0_T0_ratios: ndarray,
         rhos_1: ndarray,
         rhos_2: ndarray,
         xs: ndarray,
@@ -278,29 +258,27 @@ def solve_and_plot(
         update_color_bar: bool = False,
         plot_s_n: bool = False,
 ) -> None:
-   
+
     skip_size = 8
     min_s, max_s, min_tau, max_tau, fo_surfaces, \
         fo_entropies, fo_normals = do_freezeout_surfaces(
-        rhos_1=rhos_1,
-        rhos_2=rhos_2,
-        xs=xs,
-        T0=y0s[0],
-        pi0=y0s[2],
-        skip_size=skip_size,
-        e_freezeout=e_freezeout,
-        norm_scale=norm_scale,
-        q=q,
-    )
+            rhos_1=rhos_1,
+            rhos_2=rhos_2,
+            xs=xs,
+            T0=y0s[0],
+            mu0_T0_ratios=mu0_T0_ratios,
+            pi0=y0s[2],
+            skip_size=skip_size,
+            e_freezeout=e_freezeout,
+            norm_scale=norm_scale,
+            q=q,
+        )
 
     evol_taus_log = linspace(log(0.01),  log(3), 1000)
     evol_taus = exp(evol_taus_log)
 
     xis = [1e-20, 1, 2, 3]
-    shifts = array([0.0, 0.0, 1.0, 2.0]) / 100
-    colors=['black', 'red', 'blue']
-    linestyles = ['solid', 'dashed', 'dotted']
-    for itr in range(len(fo_surfaces)):
+    for itr in range(mu0_T0_ratios.size):
         freezeout_times = fo_surfaces[itr]
         freezeout_s = fo_entropies[itr]
         normal_vectors = fo_normals[itr]
@@ -334,7 +312,6 @@ def solve_and_plot(
             norm=Normalize(vmin=0, vmax=freezeout_s.size)
         )
 
-        
         if update_color_bar and itr == 1:
             norm = Normalize(
                 vmin=min_s,
@@ -345,34 +322,15 @@ def solve_and_plot(
                 cmap=heat_map
             )
             cax = fig.colorbar(s, ax=ax[0], orientation='vertical', pad=0.01,
-                            format='%.2f').ax
+                               format='%.2f').ax
             cax.yaxis.set_ticks(linspace(min_s, max_s, 7))
             for t in cax.get_yticklabels():
                 t.set_fontsize(18)
             cax.set_ylabel(r'$s(\tau, x)$ [GeV$^{3}$]', fontsize=20)
-        
 
-            
         if itr == 0:
             continue
 
-        x_FOs = freezeout_times[:, 0]
-        tau_FOs = freezeout_times[:, 1]
-
-        # taus = tau_FOs
-        # cmap = get_cmap(plasma, taus.size)
-        # if update_color_bar and itr == 1:
-        #     tau0 = evol_taus[0]
-        #     tauf = evol_taus[-1]
-        #     norm = Normalize(vmin=tau0, vmax=tauf)
-        #     sm = ScalarMappable(norm=norm, cmap=cmap)                        
-        #     cax = fig.colorbar(sm, ax=ax[1], orientation='vertical', pad=0.01,
-        #                     format='%.2f').ax
-        #     cax.yaxis.set_ticks(linspace(tau0, tauf, 7))
-        #     for t in cax.get_yticklabels():
-        #         t.set_fontsize(18)
-        #     cax.set_ylabel(r'$\tau$ [fm/$c$]', fontsize=20)
-                
         xi = xis[itr]
         ys = [y0s[0], xi * y0s[0], y0s[2]]
         soln_1 = odeint(eom, ys, rhos_1)
@@ -382,9 +340,6 @@ def solve_and_plot(
         mu_hat = concatenate((soln_1[:, 1][::-1], soln_2[:, 1]))
         t_interp = interp1d(rhos, t_hat)
         mu_interp = interp1d(rhos, mu_hat)
-        
-        s_interp = interp1d(rhos, entropy(t_hat, mu_hat))
-        n_interp = interp1d(rhos, number(t_hat, mu_hat))
 
         rs = linspace(0.01, 1.0, 100)
         evol_mus = zeros((rs.size, evol_taus.size))
@@ -395,62 +350,23 @@ def solve_and_plot(
             evol_mus[nn] = milne_mu(evol_taus, evol_rs, 1.0, mu_interp)
             evol_temps[nn] = milne_T(evol_taus, evol_rs, 1.0, t_interp)
 
-        ax[1].hist2d(
+        _, _, _, color_mesh = ax[itr].hist2d(
             evol_mus.reshape(-1,),
             evol_temps.reshape(-1,),
             bins=100,
             cmap=[viridis, plasma][itr - 1],
             norm='log',
-            alpha=1.0 / itr
+            alpha=1.0,
+            density=True,
         )
 
-        # ax[1].scatter(
-        #     # milne_mu(taus, 0.0, 1.0, mu_interp), 
-        #     # milne_T(taus, 0.0, 1.0, t_interp),
-        #     milne_mu(taus, x_FOs, 1.0, mu_interp), 
-        #     milne_T(taus, x_FOs, 1.0, t_interp) + shifts[itr],
-        #     color='black',
-        #     s=4.0,
-        # )
+        cax_2 = fig.colorbar(color_mesh, ax=ax[itr], orientation='vertical',
+                             pad=0.01, format='%.2f').ax
+        for t in cax_2.get_yticklabels():
+            t.set_fontsize(18)
+        cax_2.set_ylabel(r'density', fontsize=20)
 
-        # s_n = milne_entropy(taus, x_FOs, 1.0, t_interp, mu_interp=)
-        # s_n = milne
-        # mus = milne_mu(taus, x_FOs, 1.0, mu_interp)
-        # ts = array([
-        #     find_isentropic_temperature(
-        #         mu=mu,
-        #         s_n=s_n
-        #     )
-        #     for mu in mus
-        # ])
-        # ax[1].scatter(
-        #     mus,
-        #     ts,
-        #     c=taus,
-        #     s=2.0,
-        #     cmap=cmap
-        # )
-
-
-        if plot_s_n:
-            _xs = concatenate((-xs[::-1], xs))
-            for k, tau in enumerate([1.2, 2.0, 3.0]):
-                label_string_2 = ''
-                if k == 0:
-                    label_string_2 +=  r'$\mu_0/T_0 = ' + f'{xis[itr]:.1f}$'
-
-                rh = rho(tau, _xs, 1)
-                ax[2].plot(
-                    _xs,
-                    s_interp(rh) / n_interp(rh),
-                    ls=linestyles[k],
-                    color=colors[itr],
-                    label= label_string_2
-                )
     return heat_map
-
-
-# Plot the tau components and r components separately, to see which has the large change
 
 
 def main():
@@ -462,11 +378,11 @@ def main():
     rhos_2 = linspace(0, 10, 1000)
     xs = linspace(0, 6, 1000)
 
-
-    heat_map = solve_and_plot(
+    solve_and_plot(
         fig=fig,
         ax=ax,
         y0s=y0s,
+        mu0_T0_ratios=array([1e-20, 1.5, 3]),
         rhos_1=rhos_1,
         rhos_2=rhos_2,
         xs=xs,
@@ -477,65 +393,6 @@ def main():
         plot_s_n=True,
         norm_scale=0.05
     )
-
-    # y0s = array([1.2, 2 * 1.2, 0.0])
-    # rhos_1 = linspace(-10, 0, 1000)[::-1]
-    # rhos_2 = linspace(0, 10, 1000)
-    # xs = linspace(0, 6, 1000)
-
-
-    # heat_map = solve_and_plot(
-    #     fig=fig,
-    #     ax=ax,
-    #     y0s=y0s,
-    #     rhos_1=rhos_1,
-    #     rhos_2=rhos_2,
-    #     xs=xs,
-    #     e_freezeout=1.0 / HBARC,
-    #     q=1,
-    #     colors=['red'],
-    #     heat_map=heat_map,
-    #     plot_s_n=True,
-    # )
-
-    # y0s = array([1.2, 1 * 1.2, 0.0])
-    # rhos_1 = linspace(-10, 0, 1000)[::-1]
-    # rhos_2 = linspace(0, 10, 1000)
-    # xs = linspace(0, 6, 1000)
-
-
-    # heat_map = solve_and_plot(
-    #     fig=fig,
-    #     ax=ax,
-    #     y0s=y0s,
-    #     rhos_1=rhos_1,
-    #     rhos_2=rhos_2,
-    #     xs=xs,
-    #     e_freezeout=1.0 / HBARC,
-    #     q=1,
-    #     colors=['gray'],
-    #     heat_map=heat_map,
-    #     plot_s_n=True,
-    # )
-
-    # y0s = array([1.2, 1e-20, 0])
-    # rhos_1 = linspace(-30, 0, 1000)[::-1]
-    # rhos_2 = linspace(0, 30, 1000)
-    # xs = linspace(0, 6, 1000)
-
-    # solve_and_plot(
-    #     fig=fig,
-    #     ax=ax,
-    #     y0s=y0s,
-    #     rhos_1=rhos_1,
-    #     rhos_2=rhos_2,
-    #     xs=xs,
-    #     e_freezeout=1.0 / HBARC,
-    #     q=1,
-    #     colors=['black'],
-    #     heat_map=heat_map,
-    #     add_labels=False,
-    # )
 
     costumize_axis(
         ax=ax[0],
@@ -555,8 +412,18 @@ def main():
         y_title=r'$T$ [GeV]'
     )
     ax[1].axhline(0.2, color='black')
-    ax[1].text(1.0, 0.21, '$T=200$ MeV', fontsize=18)
+    ax[1].text(0.7, 0.21, '$T=200$ MeV', fontsize=18)
     ax[1].set_ylim(top=2)
+    ax[1].set_xlim(right=1.05)
+    costumize_axis(
+        ax=ax[2],
+        x_title=r'$\mu$ [GeV]',
+        y_title=r'$T$ [GeV]'
+    )
+    ax[2].axhline(0.2, color='black')
+    ax[2].text(0.7, 0.21, '$T=200$ MeV', fontsize=18)
+    ax[2].set_ylim(top=2)
+    ax[2].set_xlim(right=1.05)
     # ax[1].set_yscale('log')
     # ax[1].text(0.1, 0.7, r'$\mu_0/T_0=1$', fontsize=18)
     # ax[1].text(0.65, 0.7, r'$\mu_0/T_0=2$', fontsize=18)
@@ -566,12 +433,12 @@ def main():
     # ax[1].text(0.01, 0.169, r'$+0.02$', fontsize=16)
 
     # ax[2].set_aspect(1.0, anchor='SW')
-    costumize_axis(
-        ax=ax[2],
-        x_title=r'$x$ [fm]',
-        y_title=r'$s(\tau, x)/n(\tau, x)$'
-    )
-    ax[2].legend(loc='upper center', fontsize=20)
+    # costumize_axis(
+    #     ax=ax[2],
+    #     x_title=r'$x$ [fm]',
+    #     y_title=r'$s(\tau, x)/n(\tau, x)$'
+    # )
+    # ax[2].legend(loc='upper center', fontsize=20)
 
     fig.tight_layout()
     fig.savefig('./freeze-out-surface.pdf')
