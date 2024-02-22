@@ -15,6 +15,8 @@ ETA_S = 0.2
 AA = 1.0 / 3.0
 
 # the equations of state stuff
+
+
 def pressure(
         temperature: float,
         chem_potential: float,
@@ -66,9 +68,9 @@ def dT_drho(
         ys: ndarray,
         rho: Union[float, ndarray],
 ) -> Union[float, ndarray]:
-    
+
     temperature, chem_potenial, pi_hat = ys
-    return_value = 2 * pi_hat 
+    return_value = 2 * pi_hat
     return_value /= 3 / cosh(chem_potenial / temperature) ** 2 + 1
     return_value += -1
     return (2 / 3) * temperature * return_value * tanh(rho)
@@ -80,7 +82,7 @@ def dmu_drho(
 ) -> Union[float, ndarray]:
     temperature, chem_potenial, pi_hat = ys
     return_value = -(
-        2 
+        2
         -
         6 * temperature / chem_potenial * tanh(chem_potenial / temperature)
     ) * pi_hat
@@ -100,7 +102,7 @@ def dpi_drho(
     return_value -= pi_hat / tau_r
     return_value -= (4 / 3) * pi_hat ** 2 * tanh(rho)
     return return_value
-    
+
 
 def eom(
         ys: ndarray,
@@ -118,9 +120,9 @@ def denergy_drho(
         rho: Union[float, ndarray],
 ) -> ndarray:
     temperature, chem_potenial, _ = ys
-    return_value_1 = 4 * cosh(chem_potenial / temperature) * temperature 
+    return_value_1 = 4 * cosh(chem_potenial / temperature) * temperature
     return_value_1 *= dT_drho(ys, rho)
-    return_value_2 = -chem_potenial * dT_drho(ys, rho) 
+    return_value_2 = -chem_potenial * dT_drho(ys, rho)
     return_value_2 += temperature * dmu_drho(ys, rho)
     return_value_2 *= sinh(chem_potenial / temperature)
     return ALPHA * temperature ** 2 * (return_value_1 + return_value_2)
@@ -131,7 +133,7 @@ def dT_drho_alt(
         ys: ndarray,
         rho: Union[float, ndarray],
 ) -> Union[float, ndarray]:
-    
+
     temperature, chem_potenial, pi_hat = ys
     return_value = (-2 + pi_hat) / 3.0
     return_value += pi_hat * (chem_potenial / pi / temperature) ** 2
@@ -157,7 +159,7 @@ def dpi_drho_alt(
     return_value -= pi_hat / tau_r
     return_value -= (4 / 3) * pi_hat ** 2 * tanh(rho)
     return return_value
-    
+
 
 def eom_alt(
         ys: ndarray,
@@ -167,4 +169,4 @@ def eom_alt(
     dmudrho = dmu_drho_alt(ys, rho)
     dpidrho = dpi_drho_alt(ys, rho)
 
-    return array([dTdrho, dmudrho,dpidrho])
+    return array([dTdrho, dmudrho, dpidrho])

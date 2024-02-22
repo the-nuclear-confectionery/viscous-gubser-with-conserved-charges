@@ -16,6 +16,7 @@ from equations_of_motion import entropy
 
 HBARC = 0.19733
 
+
 def rho(
         tau: float,
         r: Union[float, ndarray],
@@ -29,7 +30,8 @@ def kappa(
         r: Union[float, ndarray],
         q: float,
 ) -> float:
-    return arctanh((2 * q ** 2 * r * tau) / (1 + (q * tau) ** 2 + (q * r) ** 2))
+    return arctanh((2 * q ** 2 * r * tau) /
+                   (1 + (q * tau) ** 2 + (q * r) ** 2))
 
 
 def u_r(
@@ -58,6 +60,7 @@ def u_y(
 ) -> float:
     r = sqrt(x ** 2 + y ** 2)
     return (y / r) * sinh(kappa(tau, r, q))
+
 
 def milne_T(
         tau: float,
@@ -91,7 +94,7 @@ def milne_energy(
     temp = ads_T(rh)
     mu = ads_mu(rh)
 
-    if type(temp) is ndarray:
+    if isinstance(temp, ndarray):
         return HBARC * energy(temperature=temp, chem_potential=mu) / tau ** 4
     else:
         if temp <= tol:
@@ -116,7 +119,7 @@ def milne_number(
     temp = ads_T(rh)
     mu = ads_mu(rh)
 
-    if type(temp) is ndarray:
+    if isinstance(temp, ndarray):
         return number(temperature=temp, chem_potential=mu) / tau ** 3
     else:
         if temp <= tol:
@@ -141,7 +144,7 @@ def milne_entropy(
     temp = ads_T(rh)
     mu = ads_mu(rh)
 
-    if type(temp) is ndarray:
+    if isinstance(temp, ndarray):
         return entropy(temperature=temp, chem_potential=mu) / tau ** 3
     else:
         if temp <= tol:
@@ -167,7 +170,7 @@ def milne_pi(
     temp = ads_T(rho(tau, r, q))
     mu = ads_mu(rho(tau, r, q))
 
-    if type(temp) is ndarray:
+    if isinstance(temp, ndarray):
         pass
     else:
         if temp <= tol:
@@ -178,7 +181,7 @@ def milne_pi(
     e = energy(temperature=temp, chem_potential=mu)
     p = pressure(temperature=temp, chem_potential=mu)
 
-    pi_hat = HBARC * (e + p) * ads_pi_bar_hat(rho(tau, r, q)) 
+    pi_hat = HBARC * (e + p) * ads_pi_bar_hat(rho(tau, r, q))
     pi_nn = pi_hat / tau ** 6
     pi_xx = -0.5 * (1 + u_x(tau, x, y, q) ** 2) * pi_hat / tau ** 4
     pi_yy = -0.5 * (1 + u_y(tau, x, y, q) ** 2) * pi_hat / tau ** 4
@@ -186,7 +189,7 @@ def milne_pi(
         y = x
     pi_xy = -0.5 * u_x(tau, x, y, q) * u_y(tau, x, y, q) * pi_hat / tau ** 4
 
-    if type(temp) is ndarray:
+    if isinstance(temp, ndarray):
         pass
     else:
         pi_nn = tol if fabs(pi_nn) < tol else pi_nn
@@ -195,4 +198,3 @@ def milne_pi(
         pi_xy = tol if fabs(pi_xy) < tol else pi_xy
 
     return [pi_xx, pi_yy, pi_xy, pi_nn]
-    

@@ -84,19 +84,20 @@ def denergy_dtau(
         2 * q ** 2 * (r ** 2 + tau ** 2)
     )
     return_value = derivative * denergy_drho(ys, rho(tau, r, q)) * tau
-    return_value -= 4.0 * energy(temperature=temperature, chem_potential=chem_potenial)
+    return_value -= 4.0 * \
+        energy(temperature=temperature, chem_potential=chem_potenial)
     return return_value / tau ** 5
 
 
 def denergy_dr(
         ys: ndarray,
         tau: float,
-        r:float,
+        r: float,
         q: float,
 ) -> float:
     derivative = - q * r / tau
     derivative /= sqrt(
-        1 + ((1 + (q * r) ** 2 - (q * tau) ** 2 ) / (2 * q * tau)) ** 2
+        1 + ((1 + (q * r) ** 2 - (q * tau) ** 2) / (2 * q * tau)) ** 2
     )
     return derivative * denergy_drho(ys, rho(tau, r, q)) / tau ** 4
 
@@ -274,7 +275,7 @@ def solve_and_plot(
             q=q,
         )
 
-    evol_taus_log = linspace(log(0.01),  log(3), 1000)
+    evol_taus_log = linspace(log(0.01), log(3), 1000)
     evol_taus = exp(evol_taus_log)
 
     xis = [1e-20, 1, 2, 3]
@@ -345,7 +346,8 @@ def solve_and_plot(
         evol_mus = zeros((rs.size, evol_taus.size))
         evol_temps = zeros_like(evol_mus)
         for nn, r0 in enumerate(rs):
-            evol_xs = odeint(dx_dtau, array([r0, r0, 0]), exp(evol_taus_log), args=(1.0,))
+            evol_xs = odeint(dx_dtau, array(
+                [r0, r0, 0]), exp(evol_taus_log), args=(1.0,))
             evol_rs = sqrt(evol_xs[:, 0] ** 2 + evol_xs[:, 1] ** 2)
             evol_mus[nn] = milne_mu(evol_taus, evol_rs, 1.0, mu_interp)
             evol_temps[nn] = milne_T(evol_taus, evol_rs, 1.0, t_interp)

@@ -1,30 +1,25 @@
+from pathlib import Path
+from typing import Optional
+from typing import List
+from variable_conversions import HBARC
+from variable_conversions import milne_pi
+from variable_conversions import milne_number
+from variable_conversions import milne_energy
+from variable_conversions import u_y
+from variable_conversions import u_x
+from equations_of_motion import eom
+from numpy import concatenate
+from numpy import array
+from numpy import ndarray
+from numpy import arange
+from numpy import linspace
+from scipy.interpolate import interp1d
+from scipy.integrate import odeint
 import sys
 import os
 
 sys.path.append('../')
 
-from scipy.integrate import odeint
-from scipy.interpolate import interp1d
-
-from numpy import linspace
-from numpy import arange
-from numpy import ndarray
-from numpy import array
-from numpy import concatenate
-
-from equations_of_motion import eom
-
-from variable_conversions import u_x
-from variable_conversions import u_y
-from variable_conversions import milne_energy
-from variable_conversions import milne_number
-from variable_conversions import milne_pi
-from variable_conversions import HBARC
-
-from typing import List
-from typing import Optional
-
-from pathlib import Path
 
 class Config:
     def __init__(self):
@@ -36,7 +31,7 @@ class Config:
         self.pi_0: Optional[float] = None
         self.tol: Optional[float] = None
         self.output_dir: Optional[str] = None
-        
+
         self.read_from_config()
 
     def read_from_config(self):
@@ -62,6 +57,7 @@ class Config:
                     self.tol = float(value)
                 elif key == 'output_dir':
                     self.output_dir = value
+
 
 if __name__ == "__main__":
     cfg = Config()
@@ -95,7 +91,7 @@ if __name__ == "__main__":
     xmin = -xmax
     ymin = -ymax
     etamin = -0.1
-    hbarc = 0.1973269804 
+    hbarc = 0.1973269804
 
     # Write header
     dir_name = f'tau0={cfg.tau_0:.2f}_T0={cfg.temp_0:.2f}_mu0={cfg.mu_0:.2f}_pi0={cfg.pi_0:.2f}'
@@ -106,8 +102,8 @@ if __name__ == "__main__":
     except (FileExistsError):
         pass
 
-
-    for tau in linspace(cfg.tau_0, cfg.tau_f, int((cfg.tau_f - cfg.tau_0) / cfg.tau_step) + 1):
+    for tau in linspace(cfg.tau_0, cfg.tau_f, int(
+            (cfg.tau_f - cfg.tau_0) / cfg.tau_step) + 1):
         file_name = f'{dir_name}/tau={tau:.2f}.txt'
         path = Path(cfg.output_dir).absolute() / file_name
         with open(str(path), 'w') as f:
@@ -115,14 +111,24 @@ if __name__ == "__main__":
 
             for x in arange(xmin, xmax, stepx):
                 for y in arange(ymin, ymax, stepy):
-                    pis = milne_pi(tau, x, y, 1.0, t_interp, mu_interp, pi_interp, cfg.tol)
+                    pis = milne_pi(
+                        tau,
+                        x,
+                        y,
+                        1.0,
+                        t_interp,
+                        mu_interp,
+                        pi_interp,
+                        cfg.tol)
                     f.write('{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n'
                             .format(
                                 x,
                                 y,
                                 0,  # eta
-                                milne_energy(tau, x, y, 1.0, t_interp, mu_interp, cfg.tol),
-                                milne_number(tau, x, y, 1.0, t_interp, mu_interp, cfg.tol),
+                                milne_energy(
+                                    tau, x, y, 1.0, t_interp, mu_interp, cfg.tol),
+                                milne_number(
+                                    tau, x, y, 1.0, t_interp, mu_interp, cfg.tol),
                                 0,  # rho_S
                                 0,  # rho_Q
                                 u_x(tau, x, y, 1.0),
@@ -133,6 +139,6 @@ if __name__ == "__main__":
                                 pis[2],  # pi^xy
                                 0,  # pi^xeta
                                 pis[1],  # pi^yy
-                                0, # pi^yeta
+                                0,  # pi^yeta
                                 pis[3],  # pi^etaeta
                             ))
