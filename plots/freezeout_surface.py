@@ -275,7 +275,7 @@ def solve_and_plot(
             q=q,
         )
 
-    evol_taus_log = linspace(log(0.01), log(3), 1000)
+    evol_taus_log = linspace(log(0.01), log(10), 1000)
     evol_taus = exp(evol_taus_log)
 
     xis = [1e-20, 1, 2, 3]
@@ -362,6 +362,9 @@ def solve_and_plot(
             density=True,
         )
 
+        ax[itr].set_ylim(bottom=0, top=2)
+        ax[itr].set_xlim(left=0, right=1.1)
+
         cax_2 = fig.colorbar(color_mesh, ax=ax[itr], orientation='vertical',
                              pad=0.01, format='%.2f').ax
         for t in cax_2.get_yticklabels():
@@ -415,8 +418,6 @@ def main():
     )
     ax[1].axhline(0.2, color='black')
     ax[1].text(0.7, 0.21, '$T=200$ MeV', fontsize=18)
-    ax[1].set_ylim(top=2)
-    ax[1].set_xlim(right=1.05)
     costumize_axis(
         ax=ax[2],
         x_title=r'$\mu$ [GeV]',
@@ -424,8 +425,6 @@ def main():
     )
     ax[2].axhline(0.2, color='black')
     ax[2].text(0.7, 0.21, '$T=200$ MeV', fontsize=18)
-    ax[2].set_ylim(top=2)
-    ax[2].set_xlim(right=1.05)
     # ax[1].set_yscale('log')
     # ax[1].text(0.1, 0.7, r'$\mu_0/T_0=1$', fontsize=18)
     # ax[1].text(0.65, 0.7, r'$\mu_0/T_0=2$', fontsize=18)
