@@ -158,13 +158,17 @@ def main():
 
     costumize_axis(
         ax=ax[T_PLOT],
-        x_title=r'$x$ [fm]',
-        y_title=r'$T(\tau, x)$ [GeV]'
+        # x_title=r'$x$ [fm]',
+        x_title=r'',
+        y_title=r'$T(\tau, x)$ [GeV]',
+        no_xnums=True,
     )
     costumize_axis(
         ax=ax[MU_PLOT],
-        x_title=r'$x$ [fm]',
-        y_title=r'$\mu(\tau, x)$ [GeV]'
+        # x_title=r'$x$ [fm]',
+        x_title=r'',
+        y_title=r'$\mu(\tau, x)$ [GeV]',
+        no_xnums=True,
     )
     costumize_axis(
         ax=ax[PIXX_PLOT],
@@ -186,7 +190,7 @@ def main():
         ax=ax2[E_PLOT],
         x_title=r'$x$ [fm]',
         # y_title=r'$\mathcal E(\tau, x)/T(\tau, x)^4$'
-        y_title=r'$\mathcal E(\tau, x)$ [GeV/fm$^{-3}$]'
+        y_title=r'$\mathcal E(\tau, x)$ [GeV/fm$^{3}$]'
     )
     ax2[E_PLOT].set_yscale('log')
     costumize_axis(

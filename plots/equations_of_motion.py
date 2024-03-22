@@ -107,10 +107,11 @@ def dpi_drho(
 def eom(
         ys: ndarray,
         rho: Union[float, ndarray],
+        ideal: bool = False,
 ) -> ndarray:
     dTdrho = dT_drho(ys, rho)
     dmudrho = dmu_drho(ys, rho)
-    dpidrho = dpi_drho(ys, rho)
+    dpidrho = 0 if ideal else dpi_drho(ys, rho)
 
     return array([dTdrho, dmudrho, dpidrho])
 
