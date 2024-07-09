@@ -5,6 +5,7 @@ This repository provides the semi-analytic solution for Gubser Flow with BSQ con
 There are two branches:
   - `qgp_eos`
   - `ccake_eos`
+
 Each implements a different equation of state (EoS) corresponding the the EoS's discussed in the [paper]().
 The scripts that generate the images in the paper are:
   - `qgp_eos`:`plots/compare_mus.py` -- this generates Figures 1 and 2 in the paper
