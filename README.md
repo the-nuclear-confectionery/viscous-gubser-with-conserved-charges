@@ -35,6 +35,7 @@ from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 from numpy import concatenate
 from numpy import linspace
+from numpy import array
 from system_massless_qgp import MasslessQGP
 from variable_conversions import milne_T
 from variable_conversions import milne_mu
@@ -45,6 +46,9 @@ system = MasslessQGP()
 # de Sitter time steps
 rhos_backward = linspace(-10, 0, 1000)[::-1]
 rhos_forward = linspace(0, 10, 1000)
+
+# Initial conditions: (temperature, chemcical potential, shear pressure)
+y0s = array([1.0, 1.0, 0.0])
 
 # Obtain the numerical solutions in de Sitter space (that's how the equations are implemented)
 # Here, I assume the initial condition is given at rho = 0
