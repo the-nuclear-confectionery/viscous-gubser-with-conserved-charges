@@ -66,6 +66,10 @@ pi_interp = interp1d(rhos, pi_bar_hat)
 t_evol = milne_T(tau, xs, 1, t_interp)
 mu_evol = milne_mu(tau, xs, 1, mu_interp)
 
+# Milne coordinates, for example, for plotting
+tau = 1.0    # fm/c
+xs = linspace(-6, 6, 200)
+
 # Convert thermodynamic quantities from de Sitter values to Milne values
 e_evol = system.milne_energy(tau, xs, 0.0, 1.0, t_interp, mu_interp)
 n_evol = system.milne_number(tau, xs, 0.0, 1.0, t_interp, mu_interp)
