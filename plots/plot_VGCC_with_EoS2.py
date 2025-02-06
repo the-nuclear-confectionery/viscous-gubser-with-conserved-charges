@@ -8,7 +8,7 @@ from numpy import concatenate
 
 import matplotlib.pyplot as plt
 
-from my_plotting import costumize_axis
+from plots.plotting_settings import costumize_axis
 
 from typing import List
 
