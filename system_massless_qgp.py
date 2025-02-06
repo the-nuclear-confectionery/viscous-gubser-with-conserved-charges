@@ -30,7 +30,7 @@ ETA_S = 0.2                                     # shear viscosity to entory rati
 # Equation of State class
 class EoS:
     '''
-    Corresponds to EoS 1 in the paper and describes a masslass quark gluon
+    Corresponds to EoS1 in the paper and describes a masslass quark-gluon
     plasma
     '''
     def pressure(
