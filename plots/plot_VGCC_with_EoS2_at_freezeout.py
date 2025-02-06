@@ -32,7 +32,7 @@ from matplotlib.patches import FancyArrow
 from matplotlib.colors import Colormap
 from matplotlib.colors import Normalize
 
-from my_plotting import costumize_axis
+from plots.plotting_settings import costumize_axis
 
 import sys
 sys.path.append('..')
