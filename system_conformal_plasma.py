@@ -27,8 +27,7 @@ ETA_S = 0.2                                 # shear viscosity to entory ratio
 # Equation of State class
 class EoS:
     '''
-    Corresponds to EoS 1 in the paper and describes a masslass quark gluon
-    plasma
+    Corresponds to EoS2 in the paper and describes a conformal plasma
     '''
     def __init__(
             self,
@@ -129,7 +128,7 @@ class EoS:
 # The equations of motion class
 class EoM:
     '''
-    This class implementst the equations of motion for temperature, chemcical
+    This class implements the equations of motion for temperature, chemical
     potentails and shear pressure for the viscous Gubser with BSQ currents
     '''
     def __init__(
