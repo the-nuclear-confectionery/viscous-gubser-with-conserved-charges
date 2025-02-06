@@ -1,19 +1,11 @@
+import sys
+sys.path.append('..')
+
 from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 from scipy.optimize import newton
 
-from numpy import linspace
-from numpy import ndarray
-from numpy import array
-from numpy import zeros
-from numpy import zeros_like
-from numpy import concatenate
-from numpy import sqrt
-from numpy import tanh
-from numpy import fmin
-from numpy import fmax
-from numpy import exp
-from numpy import log
+from numpy import *
 
 import matplotlib.pyplot as plt
 
@@ -27,11 +19,11 @@ from matplotlib.patches import FancyArrow
 
 from matplotlib.colors import Colormap
 from matplotlib.colors import Normalize
+from matplotlib.colors import LogNorm
 
-from my_plotting import costumize_axis
+from plots.plotting_settings import *
 
-import sys
-sys.path.append('..')
+
 from system_massless_qgp import MasslessQGP
 from variable_conversions import HBARC
 from variable_conversions import rho
@@ -302,12 +294,13 @@ def solve_and_plot(
                 y=tau_FO,
                 dx=normal_vectors[i, 0],
                 dy=normal_vectors[i, 1],
-                head_width=0.01,
+                head_width=0.02,
                 head_length=0.01,
+                lw=0.5,
                 color='black'
             )
 
-        heat_map = get_cmap(copper, freezeout_s.size)
+        heat_map = get_cmap('copper', freezeout_s.size)
 
         ax[0].scatter(
             freezeout_times[:, 0],
@@ -318,7 +311,7 @@ def solve_and_plot(
                 num_colors=freezeout_s.size,
                 s=freezeout_s,
             ),
-            s=3.0,
+            s=0.5,
             cmap=heat_map,
             norm=Normalize(vmin=0, vmax=freezeout_s.size)
         )
@@ -332,12 +325,12 @@ def solve_and_plot(
                 norm=norm,
                 cmap=heat_map
             )
-            cax = fig.colorbar(s, ax=ax[0], orientation='vertical', pad=0.01,
+            cax = fig.colorbar(s, ax=ax[0], orientation='vertical', pad=0.02,
                                format='%.2f').ax
             cax.yaxis.set_ticks(linspace(min_s, max_s, 7))
             for t in cax.get_yticklabels():
-                t.set_fontsize(18)
-            cax.set_ylabel(r'$s(\tau, x)$ [GeV$^{3}$]', fontsize=20)
+                t.set_fontsize(10)
+            cax.set_ylabel(r'$\displaystyle s(\tau, x)$ [GeV$^{3}$]', fontsize=12)
 
         if itr == 0:
             continue
@@ -392,22 +385,22 @@ def solve_and_plot(
             evol_mus = milne_mu(evol_taus, evol_rs, 1.0, mu_interp)
             evol_temps = milne_T(evol_taus, evol_rs, 1.0, t_interp)
 
-            ax[itr].plot(evol_mus, evol_temps, lw=2, color='black', ls='dashed')
+            ax[itr].plot(evol_mus, evol_temps, lw=1, color='black', ls='dashed')
 
         # ax[itr].set_ylim(bottom=0, top=2)
         # ax[itr].set_xlim(left=0, right=1.1)
 
         cax_2 = fig.colorbar(color_mesh, ax=ax[itr], orientation='vertical',
-                             pad=0.01, format='%.2f').ax
+                             pad=0.02, format='%.2f').ax
         for t in cax_2.get_yticklabels():
-            t.set_fontsize(18)
-        cax_2.set_ylabel(r'count (normalized)', fontsize=20)
+            t.set_fontsize(10)
+        cax_2.set_ylabel(r'count (normalized)', fontsize=12)
 
     return heat_map
 
 
 def main():
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(3.0 * 7, 1 * 7))
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(11.5, 3.36), dpi=1200)
     fig.patch.set_facecolor('white')
 
     y0s = array([1.2, 1 * 1.2, 0.0])
@@ -431,66 +424,70 @@ def main():
         norm_scale=0.05
     )
 
-    costumize_axis(
+    customize_axis(
         ax=ax[0],
-        x_title=r'$r$ [fm]',
-        y_title=r'$\tau_\mathrm{FO}$ [fm/$c$]',
+        x_title=r'$\displaystyle r$ [fm]',
+        y_title=r'$\displaystyle\tau_\mathrm{FO}$ [fm/$c$]',
     )
     ax[0].set_xlim(0, 6.0)
-    # ax[0].set_ylim(0.0, 3.0)
-    ax[0].text(4.5, 1.2, r'$\mu_0/T_0=3$', fontsize=18)
-    ax[0].text(3.2, 0.7, r'$\mu_0/T_0=2$', fontsize=18)
-    # ax[0].text(3.4, 0.55, r'$\mu_0/T_0=1$', fontsize=18)
-    ax[0].text(2.0, 0.0, r'$\mu_0/T_0=0$', fontsize=18)
+    ax[0].set_ylim(-0.1, 3.1)
+    ax[0].text(3.6, 2.5, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=3$', fontsize=10)
+    ax[0].text(0.9, 2.2, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=2$', fontsize=10)
+    # ax[0].text(3.4, 0.55, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=1$', fontsize=10)
+    ax[0].text(0.15, 0.5, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$', fontsize=10)
 
-    costumize_axis(
+    customize_axis(
         ax=ax[1],
-        x_title=r'$\mu$ [GeV]',
-        y_title=r'$T$ [GeV]'
+        x_title=r'$\displaystyle \mu_Y$ [GeV]',
+        y_title=r'$\displaystyle T$ [GeV]',
+        xlim=(0, 8),
+        ylim=(-0.1, 3.1),
     )
-    ax[1].axhline(0.2, color='black')
-    ax[1].text(4.0, 0.21, '$T=200$ MeV', fontsize=18)
-    ax[1].text(4.5, 1.00, '$s/n=\\; $const', rotation=30, fontsize=18)
-    ax[1].text(0.5, 2.5, r'$\mu_0/T_0=2$', fontsize=18)
+    ax[1].axhline(0.2, color='black', lw=0.6)
+    ax[1].text(4.0, 0.25, '$\displaystyle T=200$ MeV', fontsize=10)
+    ax[1].text(4.2, 0.95, '$\displaystyle s/n_Y=\\; $const.', rotation=28, fontsize=10)
+    ax[1].text(0.06, 0.82, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=2$', fontsize=10, transform=ax[1].transAxes)
 
-    costumize_axis(
+    customize_axis(
         ax=ax[2],
-        x_title=r'$\mu$ [GeV]',
-        y_title=r'$T$ [GeV]'
+        x_title=r'$\displaystyle \mu_Y$ [GeV]',
+        y_title=r'$\displaystyle T$ [GeV]',
+        xlim=(0, 10),
+        ylim=(-0.2, 6.2),
     )
-    ax[2].axhline(0.2, color='black')
-    ax[2].text(5.5, 0.23, '$T=200$ MeV', fontsize=18)
-    ax[2].text(6.5, 0.95, '$s/n=\\; $const', rotation=16, fontsize=18)
-    ax[2].text(0.5, 4.4, r'$\mu_0/T_0=3$', fontsize=18)
+    ax[2].axhline(0.2, color='black', lw=0.6)
+    ax[2].text(5.9, 0.30, '$\displaystyle T=200$ MeV', fontsize=10)
+    ax[2].text(5.7, 0.85, '$\displaystyle s/n_Y=\\; $const.', rotation=12, fontsize=10)
+    ax[2].text(0.06, 0.82, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=3$', fontsize=10, transform=ax[2].transAxes)
     for name in range(3):
         ax[name].text(
             0.13,
             0.92,
-            "EoS 1",
+            "EoS1",
             transform=ax[name].transAxes,
-            fontsize=18,
-            bbox={'boxstyle': 'round', 'facecolor': 'white'},
-            horizontalalignment='center'
+            fontsize=10,
+            bbox={'boxstyle': 'round', 'facecolor': 'white', 'linewidth': 0.5},
+            horizontalalignment='center',
         )
     # ax[1].set_yscale('log')
-    # ax[1].text(0.1, 0.7, r'$\mu_0/T_0=1$', fontsize=18)
-    # ax[1].text(0.65, 0.7, r'$\mu_0/T_0=2$', fontsize=18)
-    # ax[1].text(1.05, 0.7, r'$\mu_0/T_0=3$', fontsize=18)
+    # ax[1].text(0.1, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=1$', fontsize=18)
+    # ax[1].text(0.65, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=2$', fontsize=18)
+    # ax[1].text(1.05, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=3$', fontsize=18)
 
     # ax[1].text(0.01, 0.159, r'$+0.01$', fontsize=16)
     # ax[1].text(0.01, 0.169, r'$+0.02$', fontsize=16)
 
     # ax[2].set_aspect(1.0, anchor='SW')
-    # costumize_axis(
+    # customize_axis(
     #     ax=ax[2],
     #     x_title=r'$x$ [fm]',
-    #     y_title=r'$s(\tau, x)/n(\tau, x)$'
+    #     y_title=r'$s(\tau, x)/n_Y(\tau, x)$'
     # )
     # ax[2].legend(loc='upper center', fontsize=20)
 
     fig.tight_layout()
-    fig_name = './freezeout-surface-QGP.pdf'
-    print(f'saving figure to {fig_name}')
+    fig_name = './output/Fig3_VGCC-freezeout_and_trajectories.pdf'
+    print(f'Saving figure to {fig_name}')
     fig.savefig(fig_name)
 
 
