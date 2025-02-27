@@ -1,0 +1,55 @@
+# ===============================================
+#  VISCOUS GUBSER WITH CONSERVED CHARGES (VGCC)
+# ===============================================
+# DESCRIPTION: This configuration file contains
+# the parameters for the viscous Gubser solution
+# with conserved charges.
+# ===============================================
+
+# ===============================================
+#           CONFIGURATION PARAMETERS
+# ===============================================
+# -----------------------------
+# Time Evolution Parameters
+# -----------------------------
+tau_0: 1.0        # Initial proper time (fm/c)
+tau_f: 1.2        # Final proper time (fm/c)
+tau_step: 0.10    # Time step (fm/c)
+
+# -----------------------------
+# Spatial Grid Parameters
+# -----------------------------
+x_min: -5.0       # Minimum x coordinate (fm)
+x_max: 5.0        # Maximum x coordinate (fm)
+x_step: 0.05      # Step size in x (fm)
+y_min: -5.0       # Minimum y coordinate (fm)
+y_max: 5.0        # Maximum y coordinate (fm)
+y_step: 0.05      # Step size in y (fm)
+
+# -----------------------------
+# Initial Conditions (in Milne coordinates)
+# -----------------------------
+That_0: 0.050    # Initial temperature
+pihat_0: 0.0     # Initial reduced shear stress component
+muBhat_0: 0.050  # Initial baryon chemical potential 
+muShat_0: 0.000  # Initial strangeness chemical potential
+muQhat_0: 0.000  # Initial electric charge chemical potential
+
+# -----------------------------
+# Equation of State (EoS) Parameters
+# -----------------------------
+T_ast: 1.000      # Temperature scale (GeV)
+muB_ast: 1.000    # Baryon chemical potential scale (GeV)
+muS_ast: 1.000    # Strangeness chemical potential scale (GeV)
+muQ_ast: 1.000    # Electric charge chemical potential scale (GeV)
+
+# -----------------------------
+# Transport coefficients
+# -----------------------------
+eta_over_s: 0.20  # Shear viscosity over entropy density
+C: 5.0            # Relaxation time constant
+
+# -----------------------------
+# Output Configuration
+# -----------------------------
+output_dir: "data/output/analytic_solutions"
