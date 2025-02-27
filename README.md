@@ -18,40 +18,41 @@ For theoretical details, see:
 
 ## Installation
 1. Clone the repository:
-```bash
+```terminal
 git clone https://github.com/<username>/viscous_gubser_with_conserved_charges.git
 cd viscous_gubser_with_conserved_charges
 ```
 
 2. Install dependencies:
-```bash
+```terminal
 pip install numpy matplotlib scipy pandas tqdm
 ```
 
 ## Usage
 
 To generate the solutions of Gubser flow with conserved charges, execute in the terminal the following command:
-```bash
-python vgcc.py --mode <mode> --eos <eos>
+```terminal
+python vgcc.py [-h] [--config <FILE>] [--mode <{initial_condition,evolution}>] [--eos <{EoS1,EoS2}>]  [--debug]
 ```
 
 where the default arguments are:
 ```terminal
-mode: initial_conditions
-eos: conformal_plasma
+mode: initial_condition
+eos: EoS2
+config: config.yaml
 ```
 
 ### Available Modes
 
-1. `semi-analytical`: Solves hydrodynamic evolution equations until $\tau_f$ (defined on [config.yaml](config.yaml)).
-2. `initial_conditions`: Generates initial conditions for hydrodynamic simulations.
+1. `initial_condition`: Generates initial conditions for hydrodynamic simulations.
+2. `evolution`: Solves hydrodynamic evolution equations until $\tau_f$ (defined on [config.yaml](config.yaml)).
 
 
 ### Equation of State
 
 The script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRD **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2502:XXXX [nucl-th]]() for details.
 
-Current options are `EoS1` (conformal plasma) and `EoS2` (massless QGP).
+Current options are `EoS1` (massless QGP) and `EoS2` (conformal plasma).
 The details of the equations of state included by default and instructions on how to implement a custom EoS are given in the [eos folder]().
 
 ### Configuration
