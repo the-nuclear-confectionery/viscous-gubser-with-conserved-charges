@@ -13,10 +13,10 @@ def get_eom(
     Parameters:
     -----------
     eos_type: str
-        For example, "massless_qgp" or "conformal_plasma".
+        For example, "EoS1" or "EoS2".
     eos_params: dict, optional
         A dictionary that contains EoS-specific parameters. For example,
-        for the "conformal_plasma" EoS, the dictionary should contain:
+        for the EoS2, the dictionary should contain:
           - T_ast: Temperature scale parameter (float)
           - mu_ast: Chemical potential scale parameter (float)
 
@@ -24,18 +24,18 @@ def get_eom(
     --------
     An instance of BaseEoM.
     """
-    if eos_type.lower() == "massless_qgp":
+    if eos_type.lower() == "eos1":
         from eos.massless_qgp_eos import MasslessQGPEoS
         from eom.massless_qgp_eom import MasslessQGPEoM
         # Create an EOS instance (the massless QGP EOS does not need reference scales)
         eos_instance = MasslessQGPEoS()
         return MasslessQGPEoM(eos_instance, eom_params=eom_params)
-    elif eos_type.lower() == "conformal_plasma":
+    elif eos_type.lower() == "eos2":
         if eos_params is None:
-            raise ValueError("EoS params must be provided for conformal_plasma.")
+            raise ValueError("EoS params must be provided for EoS2.")
         from eos.conformal_plasma_eos import ConformalPlasmaEoS
         from eom.conformal_plasma_eom import ConformalPlasmaEoM
         eos_instance = ConformalPlasmaEoS(eos_params=eos_params)
         return ConformalPlasmaEoM(eos_instance, eos_params=eos_params, eom_params=eom_params)
     else:
-        raise ValueError(f"Unknown EoS type: {eos_type}")
+        raise ValueError(f"Unknown EoS of type {eos_type}")

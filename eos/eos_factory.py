@@ -14,10 +14,10 @@ def get_eos(
     Parameters:
     -----------
     eos_type: str
-        The type of EOS. For example: "massless_qgp" or "conformal_plasma".
+        For example, "EoS1" or "EoS2".
     eos_params: dict, optional
         A dictionary that contains EoS-specific parameters. For example,
-        for the "conformal_plasma" EOS, the dictionary should contain:
+        for the EoS2, the dictionary should contain:
           - T_ast: Temperature scale parameter (float)
           - mu_ast: Chemical potential scale parameter (float)
 
@@ -25,11 +25,11 @@ def get_eos(
     --------
     An instance of BaseEoS.
     """
-    if eos_type.lower() == "massless_qgp":
+    if eos_type.lower() == "eos1":
         return MasslessQGPEoS()
-    elif eos_type.lower() == "conformal_plasma":
+    elif eos_type.lower() == "eos2":
         if eos_params is None:
-            raise ValueError("EoS params must be provided for conformal_plasma.")
+            raise ValueError("EoS params must be provided for EoS2.")
         return ConformalPlasmaEoS(eos_params=eos_params)
     else:
         raise ValueError(f"Unknown eos_type: {eos_type}")

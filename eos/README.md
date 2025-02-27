@@ -4,7 +4,7 @@ The VGCC script provides the flexibility of changing and implementing different 
 
 Two equations of state are implemented here:
 
-1. **EoS1 (Conformal plasma):**
-2. **EoS2 (Massless QGP):**
+1. **EoS1 (Massless QGP):**
+2. **EoS2 (Conformal plasma):**
 
 Custom equations of state can be implemented using the [EoS template](eos_template.py) provided.
