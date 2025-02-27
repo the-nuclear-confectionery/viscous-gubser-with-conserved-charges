@@ -48,6 +48,7 @@ class Config:
         self.muQ_ast: float = config.get('muQ_ast', 1.00)
         self.ETA_OVER_S: float = config.get('eta_over_s', 0.20)
         self.CTAUR: float = config.get('CTAUR', 5.0)
+        self.q: float = config.get('q', 1.0)
         self.output_dir: str = config.get('output_dir', "data/output/analytic_solutions")
 
     @classmethod
@@ -119,12 +120,7 @@ def output_solution(cfg: Config, t_interp: Any, mu_interp: Any, pi_interp: Any,
     dir_path.mkdir(parents=True, exist_ok=True)
     
     # Determine the time steps based on the mode.
-    if mode == "initial_conditions":
-        time_steps = [cfg.tau_0]
-    elif mode == "semi-analytical":
-        time_steps = np.arange(cfg.tau_0, cfg.tau_f, cfg.tau_step)
-    else:
-        raise ValueError("Invalid mode. Must be either 'initial_conditions' or 'semi-analytical'.")
+    time_steps = [cfg.tau_0] if mode == "initial_condition" else np.arange(cfg.tau_0, cfg.tau_f, cfg.tau_step)
     
     # Common formatting for all output files.
     columns = [
@@ -142,39 +138,36 @@ def output_solution(cfg: Config, t_interp: Any, mu_interp: Any, pi_interp: Any,
         rows = []
         for x in np.arange(cfg.x_min, cfg.x_max + cfg.x_step, cfg.x_step):
             for y in np.arange(cfg.y_min, cfg.y_max + cfg.y_step, cfg.y_step):
-                pis = eom_instance.milne_pi(
-                    tau=tau,
-                    x=x,
-                    y=y,
-                    q=1.0,
-                    ads_T=t_interp,
-                    ads_mu=mu_interp,
-                    ads_pi_bar_hat=pi_interp,
-                    eos=eom_instance.eos,
-                    **consts,
-                    tol=tolerance,
-                )
                 energy = eom_instance.milne_energy(
                     tau=tau,
                     x=x,
                     y=y,
-                    q=1.0,
-                    ads_T=t_interp,
-                    ads_mu=mu_interp,
-                    eos=eom_instance.eos,
-                    **consts,
-                    tol=tolerance,
+                    q=cfg.q,
+                    interpolated_T_hat=t_interp,
+                    interpolated_mu_hat=mu_interp,
+                    eos_instance=eom_instance.eos,
+                    tolerance=tolerance,
                 )
                 nums = eom_instance.milne_number(
                     tau=tau,
                     x=x,
                     y=y,
-                    q=1.0,
-                    ads_T=t_interp,
-                    ads_mu=mu_interp,
-                    eos=eom_instance.eos,
-                    **consts,
-                    tol=tolerance,
+                    q=cfg.q,
+                    interpolated_T_hat=t_interp,
+                    interpolated_mu_hat=mu_interp,
+                    eos_instance=eom_instance.eos,
+                    tolerance=tolerance,
+                )
+                pis = eom_instance.milne_pi(
+                    tau=tau,
+                    x=x,
+                    y=y,
+                    q=cfg.q,
+                    interpolated_T_hat=t_interp,
+                    interpolated_mu_hat=mu_interp,
+                    interpolated_pi_bar_hat=pi_interp,
+                    eos_instance=eom_instance.eos,
+                    tolerance=tolerance,
                 )
                 row = [
                     x,
@@ -184,8 +177,8 @@ def output_solution(cfg: Config, t_interp: Any, mu_interp: Any, pi_interp: Any,
                     nums[0],
                     nums[1],
                     nums[2],
-                    u_x(tau, x, y, 1.0),
-                    u_y(tau, x, y, 1.0),
+                    u_x(tau, x, y, cfg.q),
+                    u_y(tau, x, y, cfg.q),
                     0,  # u_eta
                     0,  # bulk
                     pis[0],
@@ -214,15 +207,23 @@ def output_solution(cfg: Config, t_interp: Any, mu_interp: Any, pi_interp: Any,
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description="Viscous Gubser Flow with Conserved Charges")
-    parser.add_argument("--config", default="config.yaml", help="Path to config YAML file")
-    parser.add_argument("--mode", default="initial_conditions",
-                        choices=["initial_conditions", "semi-analytical"],
-                        help="Mode to run: initial_conditions or semi-analytical")
-    parser.add_argument("--eos", default="conformal_plasma",
-                        choices=["conformal_plasma", "massless_qgp"],
-                        help="Type of equation of state to use")
-    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser = argparse.ArgumentParser(prog="VISCOUS GUBSER FLOW WITH CONSERVED CHARGES (VGCC)", 
+                                     description="""Solve the equations of motion for viscous
+                                                    Gubser flow with conserved charges.""",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                     epilog="Developed by the UIUC Nuclear Theory Group.")
+    parser.add_argument("--config", 
+                        default="config.yaml", 
+                        help="path to config YAML file")
+    parser.add_argument("--mode", default="initial_condition",
+                        choices=["initial_condition", "evolution"],
+                        help="mode to run: initial_condition or evolution")
+    parser.add_argument("--eos", default="EoS2",
+                        choices=["EoS1", "EoS2"],
+                        help="type of equation of state to use")
+    parser.add_argument("--debug",
+                        action="store_true", 
+                        help="enable debug logging")
     return parser.parse_args()
 
 
@@ -241,7 +242,7 @@ def main() -> None:
     try:
         cfg = Config.from_yaml(args.config)
     except Exception as e:
-        logger.error(f"Failed to load configuration: {e}.")
+        logger.error(f"Failed to load configuration - {e}.")
         sys.exit(1)
 
     # Read-in the EoS and EoM parameters from the configuration.
@@ -252,7 +253,7 @@ def main() -> None:
     try:
         eom_instance = get_eom(args.eos, eos_params=eos_params, eom_params=eom_params)
     except ValueError as exc:
-        logger.error(f"EoM for EoS of type {args.eos} are not available: {exc}.")
+        logger.error(f"EoM are not available - {exc}.")
         sys.exit(1)
 
     # Setup initial conditions.

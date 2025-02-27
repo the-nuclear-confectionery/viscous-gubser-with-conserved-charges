@@ -2,8 +2,10 @@ import numpy as np
 from scipy.interpolate import interp1d
 from utils.constants import HBARC
 from utils.analytic_functions import rho, u_x, u_y
+from eos.base_eos import BaseEoS
 from eom.base_eom import BaseEoM
 from typing import Union, Optional, Dict
+from eos.conformal_plasma_eos import ConformalPlasmaEoS
 from eos.conformal_plasma_eos import ALPHA
 
 class ConformalPlasmaEoM(BaseEoM):
@@ -75,113 +77,102 @@ class ConformalPlasmaEoM(BaseEoM):
                     x: Union[float, np.ndarray],
                     y: Union[float, np.ndarray],
                     q: float,
-                    ads_T: interp1d,
-                    ads_mu: list,
-                    T_ast: float,
-                    mu_ast: np.ndarray,
-                    # eom_instance: ConformalPlasmaEoM,
-                    eos,
-                    tol: float = 1e-20) -> Union[float, np.ndarray]:
+                    interpolated_T_hat: interp1d,
+                    interpolated_mu_hat: list,
+                    eos_instance: ConformalPlasmaEoS,
+                    tolerance: float = 1e-20) -> Union[float, np.ndarray]:
         r = np.sqrt(x**2 + y**2)
         rho_value = rho(tau, r, q)
-        temp = ads_T(rho_value)
-        mu = np.array([f(rho_value) for f in ads_mu])
-        if isinstance(temp, np.ndarray):
-            energy_val = eos.energy(temp, mu)
-            return HBARC * energy_val / tau ** 4
+        T_hat = interpolated_T_hat(rho_value)
+        mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
+        if isinstance(T_hat, np.ndarray):
+            energy_hat = eos_instance.energy(T_hat, mu_hat)
+            result = HBARC * energy_hat / tau ** 4
+            return result
         else:
-            if temp <= tol:
-                temp = tol
-            energy_val = eos.energy(temp, mu)
-            val = HBARC * energy_val / tau ** 4
-            return tol if val < tol else val
+            if T_hat <= tolerance:
+                T_hat = tolerance
+            energy_hat = eos_instance.energy(T_hat, mu_hat)
+            result = HBARC * energy_hat / tau ** 4
+            return tolerance if result < tolerance else result
 
     @staticmethod
-    def milne_number(tau: float,
-                    x: Union[float, np.ndarray],
-                    y: Union[float, np.ndarray],
-                    q: float,
-                    ads_T: interp1d,
-                    ads_mu: list,
-                    T_ast: float,
-                    mu_ast: np.ndarray,
-                    # eom_instance: ConformalPlasmaEoM,
-                    eos,
-                    tol: float = 1e-20) -> Union[float, np.ndarray]:
+    def milne_number(tau: float, 
+                     x: Union[float, np.ndarray], 
+                     y: Union[float, np.ndarray], 
+                     q: float, 
+                     interpolated_T_hat: interp1d, 
+                     interpolated_mu_hat: list, 
+                     eos_instance: ConformalPlasmaEoS, 
+                     tolerance: float = 1e-20) -> Union[float, np.ndarray]:
         r = np.sqrt(x**2 + y**2)
-        rh = rho(tau, r, q)
-        temp = ads_T(rh)
-        mu = np.array([f(rh) for f in ads_mu])
-        if isinstance(temp, np.ndarray):
-            number_val = eos.number(temp, mu)
-            return number_val / tau ** 3
+        rho_value = rho(tau, r, q)
+        T_hat = interpolated_T_hat(rho_value)
+        mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
+        if isinstance(T_hat, np.ndarray):
+            number_hat = eos_instance.number(T_hat, mu_hat)
+            return number_hat / tau ** 3
         else:
-            if temp <= tol:
-                temp = tol
-            number_val = eos.number(temp, mu)
-            n = number_val / tau ** 3
-            n[np.where(n < tol)] = tol
+            if T_hat <= tolerance:
+                T_hat = tolerance
+            number_hat = eos_instance.number(T_hat, mu_hat)
+            n = number_hat / tau ** 3
+            n[np.where(n < tolerance)] = tolerance
             return n
 
     @staticmethod
-    def milne_entropy(tau: float,
-                    x: Union[float, np.ndarray],
-                    y: Union[float, np.ndarray],
-                    q: float,
-                    ads_T: interp1d,
-                    ads_mu: list,
-                    T_ast: float,
-                    mu_ast: np.ndarray,
-                    # eom_instance: ConformalPlasmaEoM,
-                    eos,
-                    tol: float = 1e-20) -> Union[float, np.ndarray]:
+    def milne_entropy(tau: float, 
+                      x: Union[float, np.ndarray], 
+                      y: Union[float, np.ndarray], 
+                      q: float, 
+                      interpolated_T_hat: interp1d, 
+                      interpolated_mu_hat: list, 
+                      eos_instance: ConformalPlasmaEoS, 
+                      tolerance: float = 1e-20) -> Union[float, np.ndarray]:
         r = np.sqrt(x**2 + y**2)
-        rh = rho(tau, r, q)
-        temp = ads_T(rh)
-        mu = np.array([f(rh) for f in ads_mu])
+        rho_value = rho(tau, r, q)
+        T_hat = interpolated_T_hat(rho_value)
+        mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
         if isinstance(temp, np.ndarray):
-            entropy_val = eos.entropy(temp, mu)
-            return entropy_val / tau**3
+            entropy_hat = eos_instance.entropy(T_hat, mu_hat)
+            return entropy_hat / tau ** 3
         else:
-            if temp <= tol:
-                temp = tol
-            entropy_val = eos.entropy(temp, mu)
-            s = entropy_val / tau**3
-            return tol if s < tol else s
+            if T_hat <= tolerance:
+                temp = tolerance
+            entropy_hat = eos_instance.entropy(T_hat, mu_hat)
+            s = entropy_hat / tau ** 3
+            return tolerance if s < tolerance else s
 
     @staticmethod
-    def milne_pi(tau: float,
-                x: Union[float, np.ndarray],
-                y: Union[float, np.ndarray],
-                q: float,
-                ads_T: interp1d,
-                ads_mu: list,
-                ads_pi_bar_hat: interp1d,
-                T_ast: float,
-                mu_ast: np.ndarray,
-                # eom_instance: ConformalPlasmaEoM,
-                eos,
-                tol: float = 1e-20,
-                nonzero_xy: bool = False) -> list:
+    def milne_pi(tau: float, 
+                 x: Union[float, np.ndarray], 
+                 y: Union[float, np.ndarray], 
+                 q: float, 
+                 interpolated_T_hat: interp1d, 
+                 interpolated_mu_hat: list,
+                 interpolated_pi_bar_hat: interp1d, 
+                 eos_instance: ConformalPlasmaEoS, 
+                 tolerance: float = 1e-20, 
+                 nonzero_xy: bool = False) -> list:
         r = np.sqrt(x**2 + y**2)
-        rh = rho(tau, r, q)
-        temp = ads_T(rh)
-        mu = np.array([f(rh) for f in ads_mu])
-        if not isinstance(temp, np.ndarray):
-            if temp <= tol:
-                temp = tol
-        e_val = eos.energy(temp, mu)
-        p_val = eos.pressure(temp, mu)
-        pi_hat = HBARC * (e_val + p_val) * ads_pi_bar_hat(rh)
+        rho_value = rho(tau, r, q)
+        T_hat = interpolated_T_hat(rho_value)
+        mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
+        if not isinstance(T_hat, np.ndarray):
+            if T_hat <= tol:
+                T_hat = tol
+        e_val = eos_instance.energy(T_hat, mu_hat)
+        p_val = eos_instance.pressure(T_hat, mu_hat)
+        pi_hat = HBARC * (e_val + p_val) * interpolated_pi_bar_hat(rho_value)
         pi_nn = pi_hat / tau**6
         pi_xx = -0.5 * (1 + u_x(tau, x, y, q)**2) * pi_hat / tau**4
         pi_yy = -0.5 * (1 + u_y(tau, x, y, q)**2) * pi_hat / tau**4
         if nonzero_xy:
             y = x
         pi_xy = -0.5 * u_x(tau, x, y, q) * u_y(tau, x, y, q) * pi_hat / tau**4
-        if not isinstance(temp, np.ndarray):
-            pi_nn = tol if np.fabs(pi_nn) < tol else pi_nn
-            pi_xx = tol if np.fabs(pi_xx) < tol else pi_xx
-            pi_yy = tol if np.fabs(pi_yy) < tol else pi_yy
-            pi_xy = tol if np.fabs(pi_xy) < tol else pi_xy
+        if not isinstance(T_hat, np.ndarray):
+            pi_nn = tolerance if np.fabs(pi_nn) < tolerance else pi_nn
+            pi_xx = tolerance if np.fabs(pi_xx) < tolerance else pi_xx
+            pi_yy = tolerance if np.fabs(pi_yy) < tolerance else pi_yy
+            pi_xy = tolerance if np.fabs(pi_xy) < tolerance else pi_xy
         return [pi_xx, pi_yy, pi_xy, pi_nn]
