@@ -16,11 +16,16 @@ import numpy as np
 
 from tqdm import tqdm
 
-sys.path.append('../../')
+sys.path.append('../')
+
 from variable_conversions import HBARC  # noqa: E402
+from variable_conversions import milne_pi  # noqa: E402
+from variable_conversions import milne_number  # noqa: E402
+from variable_conversions import milne_energy  # noqa: E402
 from variable_conversions import u_y  # noqa: E402
 from variable_conversions import u_x  # noqa: E402
-from system_conformal_plasma import ConformalPlasma
+from equations_of_motion import eom  # noqa: E402
+
 
 
 class Config:
@@ -119,16 +124,13 @@ if __name__ == "__main__":
 
     ceos_temp_0 = cfg.ceos_temp_0
     ceos_mu_0 = array([cfg.ceos_muB_0, cfg.ceos_muS_0, cfg.ceos_muQ_0])
-    system = ConformalPlasma(
-            temperature_0=ceos_temp_0,
-            chem_potential_0=ceos_mu_0
-    )
+    consts = {'temperature_0': ceos_temp_0, 'chem_potential_0': ceos_mu_0}
 
     rhos_1 = linspace(-10, 0, 1000)[::-1]
     rhos_2 = linspace(0, 10, 1000)
 
-    soln_1 = odeint(system.eom.for_scipy, y0s, rhos_1)
-    soln_2 = odeint(system.eom.for_scipy, y0s, rhos_2)
+    soln_1 = odeint(eom, y0s, rhos_1, args=(ceos_temp_0, ceos_mu_0,))
+    soln_2 = odeint(eom, y0s, rhos_2, args=(ceos_temp_0, ceos_mu_0,))
     t_hat = concatenate((soln_1[:, 0][::-1], soln_2[:, 0]))
     mu_hat = [concatenate((soln_1[:, i][::-1], soln_2[:, i]))
               for i in [1, 2, 3]]
@@ -167,7 +169,7 @@ if __name__ == "__main__":
 
         for x in arange(xmin, xmax, stepx):
             for y in arange(ymin, ymax, stepy):
-                pis = system.milne_pi(
+                pis = milne_pi(
                     tau=tau,
                     x=x,
                     y=y,
@@ -175,6 +177,7 @@ if __name__ == "__main__":
                     ads_T=t_interp,
                     ads_mu=mu_interp,
                     ads_pi_bar_hat=pi_interp,
+                    **consts,
                     tol=cfg.tol
                 )
                 f.write('{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n'
@@ -182,22 +185,24 @@ if __name__ == "__main__":
                             x,
                             y,
                             0,  # eta
-                            system.milne_energy(
+                            milne_energy(
                                 tau=tau,
                                 x=x,
                                 y=y,
                                 q=1.0,
                                 ads_T=t_interp,
                                 ads_mu=mu_interp,
+                                **consts,
                                 tol=cfg.tol
                             ),
-                            *system.milne_number(
+                            *milne_number(
                                 tau=tau,
                                 x=x,
                                 y=y,
                                 q=1.0,
                                 ads_T=t_interp,
                                 ads_mu=mu_interp,
+                                **consts,
                                 tol=cfg.tol
                             ),
                             u_x(tau, x, y, 1.0),
