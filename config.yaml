@@ -1,14 +1,14 @@
-# ===============================================
-#  VISCOUS GUBSER WITH CONSERVED CHARGES (VGCC)
-# ===============================================
-# DESCRIPTION: This configuration file contains
-# the parameters for the viscous Gubser solution
+# ===================================================
+#  VISCOUS GUBSER FLOW WITH CONSERVED CHARGES (VGCC)
+# ===================================================
+# DESCRIPTION: This configuration file contains the
+# parameters needed for the viscous Gubser solution
 # with conserved charges.
-# ===============================================
+# ===================================================
 
-# ===============================================
+# ===================================================
 #           CONFIGURATION PARAMETERS
-# ===============================================
+# ===================================================
 # -----------------------------
 # Time Evolution Parameters
 # -----------------------------
@@ -29,9 +29,9 @@ y_step: 0.05      # Step size in y (fm)
 # -----------------------------
 # Initial Conditions (in Milne coordinates)
 # -----------------------------
-That_0: 0.050    # Initial temperature
+That_0: 1.265    # Initial temperature
 pihat_0: 0.0     # Initial reduced shear stress component
-muBhat_0: 0.050  # Initial baryon chemical potential 
+muBhat_0: 0.253  # Initial baryon chemical potential 
 muShat_0: 0.000  # Initial strangeness chemical potential
 muQhat_0: 0.000  # Initial electric charge chemical potential
 
@@ -44,10 +44,11 @@ muS_ast: 1.000    # Strangeness chemical potential scale (GeV)
 muQ_ast: 1.000    # Electric charge chemical potential scale (GeV)
 
 # -----------------------------
-# Transport coefficients
+# Other Parameters
 # -----------------------------
 eta_over_s: 0.20  # Shear viscosity over entropy density
 C: 5.0            # Relaxation time constant
+q: 1.0            # Gubser dimensionful parameter (fm^-1)
 
 # -----------------------------
 # Output Configuration
