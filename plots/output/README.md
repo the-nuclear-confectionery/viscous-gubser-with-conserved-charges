@@ -1,1 +1,0 @@
-The output of plotting scripts will be saved here.
