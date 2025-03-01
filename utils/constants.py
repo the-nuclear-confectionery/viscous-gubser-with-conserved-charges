@@ -1,5 +1,5 @@
 HBARC = 0.19733
-tolerance = 1e-20    
+tolerance = 1e-20
 
 def print_header() -> None:
     """
