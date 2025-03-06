@@ -3,7 +3,7 @@ from scipy.interpolate import interp1d
 
 from typing import Union
 
-from utils.constants import HBARC
+from utils.constants import HBARC, tolerance
 from eos.base_eos import BaseEoS
 
 def rho(
@@ -75,8 +75,7 @@ def milne_energy(tau: float,
                 q: float,
                 interpolated_T_hat: interp1d,
                 interpolated_mu_hat: list,
-                eos_instance: BaseEoS,
-                tolerance: float = 1e-20) -> Union[float, np.ndarray]:
+                eos_instance: BaseEoS) -> Union[float, np.ndarray]:
         r = np.sqrt(x**2 + y**2)
         rho_value = rho(tau, r, q)
         T_hat = interpolated_T_hat(rho_value)
@@ -99,8 +98,7 @@ def milne_number(tau: float,
                 q: float, 
                 interpolated_T_hat: interp1d, 
                 interpolated_mu_hat: list, 
-                eos_instance: BaseEoS,
-                tolerance: float = 1e-20) -> Union[float, np.ndarray]:
+                eos_instance: BaseEoS) -> Union[float, np.ndarray]:
         r = np.sqrt(x ** 2 + y ** 2)
         rho_value = rho(tau, r, q)
         T_hat = interpolated_T_hat(rho_value)
@@ -123,18 +121,17 @@ def milne_entropy(tau: float,
                 q: float, 
                 interpolated_T_hat: interp1d, 
                 interpolated_mu_hat: list, 
-                eos_instance: BaseEoS,
-                tolerance: float = 1e-20) -> Union[float, np.ndarray]:
+                eos_instance: BaseEoS) -> Union[float, np.ndarray]:
         r = np.sqrt(x ** 2 + y ** 2)
         rho_value = rho(tau, r, q)
         T_hat = interpolated_T_hat(rho_value)
         mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
-        if isinstance(temp, np.ndarray):
+        if isinstance(T_hat, np.ndarray):
                 entropy_hat = eos_instance.entropy(T_hat, mu_hat)
                 return entropy_hat / tau ** 3
         else:
                 if T_hat <= tolerance:
-                        temp = tolerance
+                        T_hat = tolerance
                 entropy_hat = eos_instance.entropy(T_hat, mu_hat)
                 s = entropy_hat / tau ** 3
                 return tolerance if s < tolerance else s
@@ -147,16 +144,15 @@ def milne_pi(tau: float,
                 interpolated_T_hat: interp1d, 
                 interpolated_mu_hat: list,
                 interpolated_pi_bar_hat: interp1d, 
-                eos_instance: BaseEoS, 
-                tolerance: float = 1e-20, 
+                eos_instance: BaseEoS,
                 nonzero_xy: bool = False) -> list:
         r = np.sqrt(x ** 2 + y **2)
         rho_value = rho(tau, r, q)
         T_hat = interpolated_T_hat(rho_value)
         mu_hat = np.array([f(rho_value) for f in interpolated_mu_hat])
         if not isinstance(T_hat, np.ndarray):
-                if T_hat <= tol:
-                        T_hat = tol
+                if T_hat <= tolerance:
+                        T_hat = tolerance
         e_val = eos_instance.energy(T_hat, mu_hat)
         p_val = eos_instance.pressure(T_hat, mu_hat)
         pi_hat = HBARC * (e_val + p_val) * interpolated_pi_bar_hat(rho_value)
