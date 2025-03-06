@@ -162,7 +162,7 @@ def solve_equations(
     pi_bar_hat_interp = interp1d(rhos, pi_bar_hat)
     # Return the interpolation functions.
     logger.info(f"Equations of motion solved.")
-    return (T_hat_interp, mu_hat_interp, pi_bar_hat_interp)
+    return T_hat_interp, mu_hat_interp, pi_bar_hat_interp
 
 
 def output_solution(cfg: Config, 
@@ -187,7 +187,7 @@ def output_solution(cfg: Config,
     logger.info(f"Generating ouput for {mode} mode.")
 
     # Unpack the solutions.
-    T_interp, mu_interp, pi_interp = solutions
+    T_hat_interp, mu_hat_interp, pi_bar_hat_interp = solutions
 
     # Create output directory
     dir_path = Path(cfg.output_dir).absolute()
@@ -217,31 +217,28 @@ def output_solution(cfg: Config,
                     x=x,
                     y=y,
                     q=cfg.q,
-                    interpolated_T_hat=T_interp,
-                    interpolated_mu_hat=mu_interp,
-                    eos_instance=eom_instance.eos,
-                    tolerance=tolerance,
+                    interpolated_T_hat=T_hat_interp,
+                    interpolated_mu_hat=mu_hat_interp,
+                    eos_instance=eom_instance.eos
                 )
                 nums = milne_number(
                     tau=tau,
                     x=x,
                     y=y,
                     q=cfg.q,
-                    interpolated_T_hat=T_interp,
-                    interpolated_mu_hat=mu_interp,
-                    eos_instance=eom_instance.eos,
-                    tolerance=tolerance,
+                    interpolated_T_hat=T_hat_interp,
+                    interpolated_mu_hat=mu_hat_interp,
+                    eos_instance=eom_instance.eos
                 )
                 pis = milne_pi(
                     tau=tau,
                     x=x,
                     y=y,
                     q=cfg.q,
-                    interpolated_T_hat=T_interp,
-                    interpolated_mu_hat=mu_interp,
-                    interpolated_pi_bar_hat=pi_interp,
-                    eos_instance=eom_instance.eos,
-                    tolerance=tolerance,
+                    interpolated_T_hat=T_hat_interp,
+                    interpolated_mu_hat=mu_hat_interp,
+                    interpolated_pi_bar_hat=pi_bar_hat_interp,
+                    eos_instance=eom_instance.eos
                 )
                 row = [
                     x,
