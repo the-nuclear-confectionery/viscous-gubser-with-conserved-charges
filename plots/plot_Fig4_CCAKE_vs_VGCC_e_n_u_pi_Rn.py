@@ -9,7 +9,8 @@ import pandas as pd
 import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.analytic_functions import HBARC
+from utils.constants import HBARC
+
 
 import plotting_settings as myplt  # noqa
 
