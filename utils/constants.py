@@ -1,4 +1,4 @@
-HBARC = 0.19733
+HBARC = 0.1973269804
 tolerance = 1e-20
 
 def print_header() -> None:
