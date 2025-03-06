@@ -46,8 +46,8 @@ class MasslessQGPEoS(BaseEoS):
     ) -> Union[float, np.ndarray]:
         # Note: mu = (muB, muS, muQ), but we only use muB.
         # nS and nQ are always zero.
-        return_value = (2 * BETA1 * mu[0] * T ** 2) + (4 * BETA2 * mu[0] ** 3)
-        return return_value  * np.array([1, 0, 0])
+        return_value = (2 * BETA1 * mu * T ** 2) + (4 * BETA2 * mu ** 3)
+        return return_value
     
     # Eq. (14) in the paper
     def entropy(
