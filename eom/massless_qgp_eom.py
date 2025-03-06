@@ -60,3 +60,24 @@ class MasslessQGPEoM(BaseEoM):
         ret_val -= pi_hat / tau_R
         ret_val -= (4 / 3) * pi_hat ** 2 * np.tanh(rho_value)
         return ret_val
+    
+    # Compute the derivative of the energy density with respect to ρ
+    def denergy_drho(self, ys: np.ndarray, rho_val: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
+        """
+        Compute the derivative of the energy density with respect to ρ
+        in an EoS-independent way.
+        de/ρ = (de/dT)(dT/dρ) + Σ_Y(de/dμ_Y)(dμ_Y/dρ) 
+             = 3s(dT/dρ) + 3Σ_Y(n_Y)(dμ_Y/dρ)
+        """
+        # Unpack the state vector.
+        T_hat, muB_hat, muS_hat, muQ_hat, _ = ys
+        mu_hat = np.array([muB_hat, muS_hat, muQ_hat])
+        # Compute the entropy density and the particle number densities.
+        s = self.eos.entropy(T_hat, mu_hat)
+        nY = self.eos.number(T_hat, mu_hat)
+        # Compute the derivatives of dT/drho and dμ/dρ:
+        dT = self.dT_drho(ys, rho_val)
+        dmu = self.dmu_drho(ys, rho_val)
+        # Compute the derivative of the energy density with respect to ρ.
+        value = 3 * (s * dT + np.dot(nY, dmu))
+        return value
