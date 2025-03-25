@@ -1,18 +1,26 @@
 import sys
 import os
 import argparse
+import logging
 
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib.transforms import Bbox, TransformedBbox
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils.constants import HBARC
 
 
 import plotting_settings as myplt  # noqa
+
+# Configure logging.
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 
 plot_index = 1
@@ -111,60 +119,30 @@ def read_sim(sim_result_folder):
     for ii, t in enumerate(time_list):
         if ii % plot_index != 0:
             continue
-        col_names = [
-            'id',
-            't',
-            'x',
-            'y',
-            'p',
-            'T',
-            'muB',
-            'muS',
-            'muQ',
-            'e',
-            'rhoB',
-            'rhoS',
-            'rhoQ',
-            's',
-            's_smoothed',
-            's_specific',
-            'sigma',
-            'spec_s',
-            'stauRelax',
-            'bigTheta',
-            '??',
-            '??2',
-            'pi00',
-            'pixx',
-            'piyy',
-            'pixy',
-            't2pi33',
-            'v1',
-            'v2',
-            'gamma',
-            'frz',
-            'eos']
+        col_names = ['id', 't', 'x', 'y','eta', 'p', 'T', 'muB', 'muS', 'muQ', 'e', 'rhoB',
+            'rhoS', 'rhoQ', 's', 'eta_pi', 'zeta_Pi', 'tau_Pi', 'tau_pi',
+            'theta', 'inverse_rey_s', 'inverse_rey_bulk', 'shear_kn', 'shear_bulk', 
+            'pitt', 'pixx', 'piyy', 'pitx', 'pity', 'pixy',
+            'pixeta', 'pyeta', 'pietaeta', 'ux', 'uy','uet' ,'gamma', 'freeze', 'eos', '?']
         idx = int(np.round((float(t) - 1) / dt) / 100)
         inp_path = os.path.join(sim_result_folder, f'system_state_{idx}.dat')
-        print(inp_path)
+        logger.info(f"Reading {inp_path}")
+        if not os.path.exists(inp_path):
+            logger.error(f"File not found: {inp_path}")
+            continue
         df = pd.read_table(inp_path,
-                           names=col_names, sep=' ', header=0)
-        df['ux'] = df.loc[:, 'v1'] * df.loc[:, 'gamma']
-        df['uy'] = df.loc[:, 'v2'] * df.loc[:, 'gamma']
+                           names=col_names, sep='\s+', header=0)
         df['r'] = np.sqrt(df['x']**2 + df['y']**2)
         df['phi'] = np.arctan2(df['y'], df['x'])
-        df['e'] = df['e'] / 1000  # convert to GeV/fm^3
 
         df['pixx'] = df['pixx'] * HBARC  # convert to GeV/fm^3
         df['pixy'] = df['pixy'] * HBARC  # convert to GeV/fm^3
         df['piyy'] = df['piyy'] * HBARC  # convert to GeV/fm^3
 
-        df['t2pi33'] = df['t2pi33'] * HBARC  # convert to GeV/fm^3
+        df['pietaeta'] = df['pietaeta'] * HBARC  # convert to GeV/fm^3
 
         df = get_reynolds_number(df, float(t)**2)
         df_query = df.query(filter_criteria)
-
-        # df_query = df_query[::3]
 
         sim_style = {'facecolor': cmap(ii), 's': 20, 'edgecolors': 'k'}
 
@@ -172,27 +150,27 @@ def read_sim(sim_result_folder):
         ax['e'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['e'].to_numpy()[
-                ::stride], **sim_style, zorder=2, lw=0.5)
+                ::stride], **sim_style, zorder=10, lw=0.5)
         ax['rhoB'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['rhoB'].to_numpy()[
-                ::stride], **sim_style, zorder=2, lw=0.5)
+                ::stride], **sim_style, zorder=10, lw=0.5)
         ax['ux'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['ux'].to_numpy()[
-                ::stride], **sim_style, zorder=2, lw=0.5)
+                ::stride], **sim_style, zorder=10, lw=0.5)
         ax['pixx'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['pixx'].to_numpy()[
-                ::stride], **sim_style, zorder=2, lw=0.5)
+                ::stride], **sim_style, zorder=10, lw=0.5)
         ax['Rey'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['reynolds'].to_numpy()[
-                ::stride], **sim_style, zorder=2, lw=0.5)
+                ::stride], **sim_style, zorder=10, lw=0.5)
         ax['pixy'].scatter(
             df_query['r'].to_numpy()[
                 ::stride], df_query['pixy'].to_numpy()[
-                ::stride],  **sim_style, zorder=2, lw=0.5)
+                ::stride],  **sim_style, zorder=10, lw=0.5)
 
 
 def beautify():
@@ -223,7 +201,7 @@ def beautify():
             if key == 'e':
                 ylim = (-0.25, 8.25)
             elif key == 'rhoB':
-                ylim = (-0.25, 8.25)
+                ylim = (-0.5, 13.0)
             elif key == 'ux':
                 ylim = (-0.1, 1.6)
             myplt.customize_axis(ax=ax[key],
