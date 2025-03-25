@@ -256,7 +256,8 @@ def plot(cfg: Config,
             nonzero_xy=True
         )
 
-        # Plot temperature on the left grid
+        # Plot temperature
+        logger.debug(f"Plotting temperature for tau={tau:.2f} fm/c")
         ax1[T_PLOT].plot(
             xs, temperature,
             color=colors[n],
@@ -265,7 +266,8 @@ def plot(cfg: Config,
             label=(r'$\displaystyle\hat{\mu}_{Y,\,0}/\hat{T}_0=' + f'{initial_conditions[1] / initial_conditions[0]:.1f}$'
                    if n == 0 else None)
         )
-        # Plot chemical potential on the left grid
+        # Plot chemical potential
+        logger.debug(f"Plotting chemical potential for tau={tau:.2f} fm/c")
         ax1[MU_PLOT].plot(
             xs, chemical_potential,
             color=colors[n],
@@ -273,6 +275,8 @@ def plot(cfg: Config,
             ls=linestyles[n],
             label=(r'$\displaystyle \tau = ' + f'{tau:.2f}$ fm/$c$' if add_labels else None)
         )
+        # Plot shear components
+        logger.debug(f"Plotting shear components for tau={tau:.2f} fm/c")
         ax1[PIYY_PLOT].plot(
             xs, pi_yy / (4.0 * energy / 3.0),
             color=colors[n],
@@ -286,7 +290,8 @@ def plot(cfg: Config,
             ls=linestyles[n]
         )
 
-        # Plot the right figure curves: energy, number, and entropy
+        # Plot energy density
+        logger.debug(f"Plotting energy density for tau={tau:.2f} fm/c")
         ax2[E_PLOT].plot(
             xs, energy,
             color=colors[n],
@@ -295,6 +300,8 @@ def plot(cfg: Config,
             label=(r'$\displaystyle\hat{\mu}_{Y,\,0}/\hat{T}_0=' + f'{initial_conditions[1] / initial_conditions[0]:.1f}$'
                    if n == 0 else None)
         )
+        # Plot number density
+        logger.debug(f"Plotting number density for tau={tau:.2f} fm/c")
         ax2[N_PLOT].plot(
             xs, number_density,
             color=colors[n],
@@ -302,6 +309,8 @@ def plot(cfg: Config,
             ls=linestyles[n],
             label=(r'$\displaystyle \tau = ' + f'{tau:.2f}$ fm/$c$' if add_labels else None)
         )
+        # Plot entropy density
+        logger.debug(f"Plotting entropy density for tau={tau:.2f} fm/c")
         ax2[S_PLOT].plot(
             xs, entropy_density,
             color=colors[n],
@@ -479,7 +488,7 @@ def main() -> None:
     file_name = "Fig1_VGCC-T_mu_pi.pdf"
     file_path = dir_path / file_name
     fig.tight_layout()
-    logger.info(f"Saving left figure to {file_path}")
+    logger.info(f"Saving first figure to {file_path}")
     fig.savefig(file_path)
 
     # Customize right figure axes.
@@ -522,7 +531,7 @@ def main() -> None:
     file_name = "Fig2_VGCC-e_n_s.pdf"
     file_path = dir_path / file_name
 
-    logger.info(f"Saving right figure to {file_path}")
+    logger.info(f"Saving second figure to {file_path}")
     fig2.savefig(file_path)
 
     logger.info("Plotting complete.")
