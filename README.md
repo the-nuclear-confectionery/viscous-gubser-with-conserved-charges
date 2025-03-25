@@ -23,8 +23,8 @@ For theoretical details, see:
 ## Installation
 1. Clone the repository:
 ```terminal
-git clone https://github.com/<username>/viscous_gubser_with_conserved_charges.git
-cd viscous_gubser_with_conserved_charges
+git clone git@github.com:the-nuclear-confectionery/viscous-gubser-with-conserved-charges.git
+cd viscous-gubser-with-conserved-charges
 ```
 
 2. Install dependencies:
