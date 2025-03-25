@@ -13,7 +13,7 @@
 # Time Evolution Parameters
 # -----------------------------
 tau_0: 1.0        # Initial proper time (fm/c)
-tau_f: 1.2        # Final proper time (fm/c)
+tau_f: 2.0        # Final proper time (fm/c)
 tau_step: 0.10    # Time step (fm/c)
 
 # -----------------------------
@@ -21,19 +21,19 @@ tau_step: 0.10    # Time step (fm/c)
 # -----------------------------
 x_min: -5.0       # Minimum x coordinate (fm)
 x_max: 5.0        # Maximum x coordinate (fm)
-x_step: 0.05      # Step size in x (fm)
+x_step: 0.050      # Step size in x (fm)
 y_min: -5.0       # Minimum y coordinate (fm)
 y_max: 5.0        # Maximum y coordinate (fm)
-y_step: 0.05      # Step size in y (fm)
+y_step: 0.050      # Step size in y (fm)
 
 # -----------------------------
-# Initial Conditions (in Milne coordinates)
+# Initial Conditions (in Gubser coordinates)
 # -----------------------------
-That_0: 1.265    # Initial temperature
-pihat_0: 0.0     # Initial reduced shear stress component
-muBhat_0: 0.253  # Initial baryon chemical potential 
-muShat_0: 0.000  # Initial strangeness chemical potential
-muQhat_0: 0.000  # Initial electric charge chemical potential
+T_hat_0: 1.2    # Initial temperature
+pi_hat_0: 0.0     # Initial reduced shear stress component
+muB_hat_0: 0.36  # Initial baryon chemical potential
+muS_hat_0: 0.000  # Initial strangeness chemical potential
+muQ_hat_0: 0.000  # Initial electric charge chemical potential
 
 # -----------------------------
 # Equation of State (EoS) Parameters
@@ -53,4 +53,4 @@ q: 1.0            # Gubser dimensionful parameter (fm^-1)
 # -----------------------------
 # Output Configuration
 # -----------------------------
-output_dir: "data/output/analytic_solutions"
+output_dir: "data/output/analytic_solutions/EoS2/mu_over_T_0.3/"
