@@ -57,7 +57,7 @@ config: config.yaml
 The script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRD **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2502:XXXX [nucl-th]]() for details.
 
 Current options are `EoS1` (massless QGP) and `EoS2` (conformal plasma).
-The details of the equations of state included by default and instructions on how to implement a custom EoS are given in the [eos folder]().
+The details of the equations of state included by default and instructions on how to implement a custom EoS are given in the [eos](eos) folder.
 
 ### Configuration
 
@@ -83,7 +83,7 @@ If you use this code, please cite:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. An example on how to create your own script is included in [CONTRIBUTING](). A template EoS script is also included inside the [eos](eos) directory.
+Contributions are welcome! Please feel free to submit a Pull Request. Additional equations of state can be included by creating the corresponding files inside the [eos](eos) and [eom](eom) directories.
 
 ## Authorship
 
