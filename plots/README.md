@@ -9,27 +9,22 @@ python plot_vgcc.py
 
 or can be executed one by one as described below.
 
-## `plot_Fig1_VGCC_T_mu_pi.py`
+## Figure 1 & 2: `plot_Fig1_VGCC_T_mu_pi.py`
 ```terminal
 python plot_Fig1_VGCC_T_mu_pi.py
 ```
 
-## `plot_Fig2_VGCC_e_n_s.py`
-```terminal
-python plot_Fig2_VGCC_e_n_s.py
-```
-
-## `plot_Fig3_VGCC_hypersurface_and_trajectories.py`
+## Figure 3: `plot_Fig3_VGCC_hypersurface_and_trajectories.py`
 ```terminal
 python plot_Fig3_VGCC_hypersurface_and_trajectories.py
 ```
 
-## `plot_Fig4_CCAKE_vs_VGCC_e_n_u_pi_Rn.py`
+## Figure 4: `plot_Fig4_CCAKE_vs_VGCC_e_n_u_pi_Rn.py`
 ```terminal
 python plot_Fig4_CCAKE_vs_VGCC_e_n_u_pi_Rn.py --analytical_path <path/to/analytical/solution/directory> --simulation_path <path/to/numerical/simulation/results/directory> --output_path <path/to/output/directory>
 ```
 
-## `plot_Fig5_CCAKE_vs_VGCC_hypersurface.py`
+## Figure 5: `plot_Fig5_CCAKE_vs_VGCC_hypersurface.py`
 ```terminal
 python plot_Fig5_CCAKE_vs_VGCC_hypersurface.py --simulation_path <path/to/numerical/simulation/results/directory> --output_path <path/to/output/directory>
 ```
