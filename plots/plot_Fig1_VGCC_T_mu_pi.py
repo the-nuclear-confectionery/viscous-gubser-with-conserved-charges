@@ -381,7 +381,7 @@ def main() -> None:
     # Define spatial grid and rho ranges.
     xs = np.linspace(-6, 6, 200)
 
-    # Prepare figure 1 (left; 2x2 grid) and figure 2 (right; 1x3 grid)
+    # Prepare figure 1 (2x2 grid) and figure 2 (1x3 grid)
     fig, ax1 = plt.subplots(nrows=2, ncols=2, figsize=(7, 6), dpi=1200, sharex=True)
     fig.patch.set_facecolor('white')
     fig2, ax2 = plt.subplots(nrows=1, ncols=3, figsize=(10.5, 3.36), dpi=1200)
