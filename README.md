@@ -1,13 +1,16 @@
 # Viscous Gubser flow with conserved charges (VGCC)
-
 A Python implementation of semi-analytical solutions for Gubser flow with conserved charges (baryon number $B$, strangeness $S$, and electric charge $Q$) for benchmarking relativistic fluid simulations.
+
+<p align="center">
+<img src="utils/VGCC_evolution.png" alt="logo" width="500"/>
+</p>
 
 ## Overview
 
 This repository provides tools to generate semi-analytical solutions for Gubser flow with conserved charges. These solutions can serve as benchmarks for relativistic viscous hydrodynamics codes.
 
 For theoretical details, see:
-- K. Ingles, W. Serenone, J. Salinas San Martín, and J. Noronha-Hostler,
+- K. Ingles, J. Salinas San Martín, W. Serenone, and J. Noronha-Hostler,
  _Viscous Gubser flow with conserved charges to benchmark fluid simulations_, [Phys. Rev. D **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2502:XXXX [nucl-th]]().
 
 ## Features
@@ -69,7 +72,7 @@ If you use this code, please cite:
 ```bibtex
 @article{ingles2025viscous,
   title={Viscous Gubser flow with conserved charges to benchmark fluid simulations},
-  author={Ingles, K. and Serenone, W. and {Salinas San Martín}, J. and Noronha-Hostler, J.},
+  author={Ingles, K. and {Salinas San Martín}, J. and Serenone, W. and Noronha-Hostler, J.},
   journal={Phys. Rev. D},
   volume={},
   pages={},
