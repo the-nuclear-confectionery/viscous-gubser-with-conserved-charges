@@ -203,11 +203,8 @@ def find_color_indices(
         num_colors: int,
         s: Union[float, np.ndarray],
 ) -> Union[float, np.ndarray]:
-    logger.debug(f"Function find_color_indices(min_s={min_s}, max_s={max_s}, num_colors={num_colors}, s={s}) called")
     ds = (max_s - min_s) / num_colors
-    logger.debug(f"ds = {ds}")
     result = np.floor((s - min_s) / ds)
-    logger.debug(f"result = {result}")
     return result
 
 
@@ -507,7 +504,7 @@ def main():
     except ValueError as exc:
         logger.error(f"EoM are not available - {exc}.")
         sys.exit(1)
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(10.5, 3.36), dpi=1200, width_ratios=[1.15, 1, 1])
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(11.1, 3.36), dpi=1200, width_ratios=[1.15, 1, 1])
 
     e_freezeout = 1 / HBARC
     norm_scale = 0.075
@@ -517,17 +514,17 @@ def main():
     solutions = solve_equations(initial_conditions, eom_instance)
     plot_hypersurface(args, cfg, fig, ax[0], solutions, eom_instance, initial_conditions, e_freezeout, norm_scale)
 
-    # Plot hypersurface for mu/T = 2
+    # Plot hypersurface for mu/T = 7
     initial_conditions = np.array([cfg.T_hat_0, 7 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     plot_hypersurface(args, cfg, fig, ax[0], solutions, eom_instance, initial_conditions, e_freezeout, norm_scale)
 
-    # Plot hypersurface for mu/T = 3
+    # Plot hypersurface for mu/T = 9
     initial_conditions = np.array([cfg.T_hat_0, 9 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     plot_hypersurface(args, cfg, fig, ax[0], solutions, eom_instance, initial_conditions, e_freezeout, norm_scale, draw_colorbar=True)
 
-    # Plot trajectories for mu/T = 5
+    # Plot trajectories for mu/T = 7
     initial_conditions = np.array([cfg.T_hat_0, 7 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     # plot_trajectories(args, cfg, fig, ax[1], solutions, eom_instance, initial_conditions, e_freezeout)
@@ -592,7 +589,7 @@ def main():
     ax[1].text(2.55, 0.04, r'$x_3=3.0\;\mathrm{fm}$', fontsize=10, color='r', ha='right')
     ax[1].text(2.55, 0.01, r'$x_4=4.0\;\mathrm{fm}$', fontsize=10, color='r', ha='right')
 
-    # Plot trajectories for mu/T = 8
+    # Plot trajectories for mu/T = 9
     initial_conditions = np.array([cfg.T_hat_0, 9 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     # plot_trajectories(args, cfg, fig, ax[2], solutions, eom_instance, initial_conditions, e_freezeout)
@@ -653,9 +650,9 @@ def main():
         xlim=(-0.2, 5.2),
         ylim=(-0.2, 4.2),
     )
-    ax[0].text(0.0, 1.0, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$', fontsize=10)
-    ax[0].text(0.9, 1.9, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=7$', fontsize=10)
-    ax[0].text(3.4, 3.3, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=9$', fontsize=10)
+    ax[0].text(0.00, 1.10, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$', fontsize=10)
+    ax[0].text(1.05, 1.95, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=7$', fontsize=10)
+    ax[0].text(3.3, 3.4, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=9$', fontsize=10)
 
 
     customize_axis(
@@ -665,8 +662,7 @@ def main():
         xlim=(-0.1, 2.7),
         ylim=(-0.01, 0.41),
     )
-    # ax[1].axhline(HBARC, color='black', lw=0.6)
-    # ax[1].text(0.0, 0.25, '$\displaystyle T=200$ MeV', fontsize=10, transform=ax[1].transAxes)
+
     ax[1].text(1.85, 0.25, '$\displaystyle s/n_Y=\\; $const.', rotation=42, fontsize=10)
     ax[1].text(0.06, 0.82, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=7$', fontsize=10, transform=ax[1].transAxes)
 
@@ -677,9 +673,7 @@ def main():
         xlim=(-0.1, 2.7),
         ylim=(-0.01, 0.41),
     )
-    # ax[2].axhline(HBARC, color='black', lw=0.6)
-    # ax[2].text(0.9, 0.30, '$\displaystyle T=200$ MeV', fontsize=10, transform=ax[2].transAxes)
-    # ax[2].text(0.7, 0.85, '$\displaystyle s/n_Y=\\; $const.', rotation=12, fontsize=10, transform=ax[2].transAxes)
+
     ax[2].text(0.06, 0.82, r'$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=9$', fontsize=10, transform=ax[2].transAxes)
     for name, label in zip(range(3), ['a', 'b', 'c']):
         ax[name].text(
@@ -700,26 +694,9 @@ def main():
         )
 
 
-    # ax[1].set_yscale('log')
-    # ax[1].text(0.1, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=1$', fontsize=18)
-    # ax[1].text(0.65, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=2$', fontsize=18)
-    # ax[1].text(1.05, 0.7, r'$\hat{\mu}_{Y,0}/\hat{T}_0=3$', fontsize=18)
-
-    # ax[1].text(0.01, 0.159, r'$+0.01$', fontsize=16)
-    # ax[1].text(0.01, 0.169, r'$+0.02$', fontsize=16)
-
-    # ax[2].set_aspect(1.0, anchor='SW')
-    # customize_axis(
-    #     ax=ax[2],
-    #     x_title=r'$x$ [fm]',
-    #     y_title=r'$s(\tau, x)/n_Y(\tau, x)$'
-    # )
-    # ax[2].legend(loc='upper center', fontsize=20)
-
     ax[1].set_aspect(6.428, anchor='SW')
     ax[2].set_aspect(6.428, anchor='SW')
     fig.tight_layout()
-    # fig.subplots_adjust(hspace=[0.5, 0.5])
     output_file = output_dir / "Fig3_VGCC-freezeout_and_trajectories.pdf"
     fig.savefig(output_file)
     logger.info(f"Saved figure to {output_file}")
