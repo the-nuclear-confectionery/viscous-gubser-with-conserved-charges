@@ -79,7 +79,8 @@ def customize_axis(ax: Axes,
     
     if no_xnums:
         # Hide x-axis tick labels while keeping tick marks for a neat appearance.
-        ax.tick_params(axis='x', labelsize=0, top=True)
+        ax.set_xticklabels([])  # clear tick labels on x-axis
+        ax.tick_params(axis='x', top=True)
         ax.tick_params(axis='y', labelsize=14, right=True)
     else:
         ax.tick_params(axis='both', labelsize=14, top=True, right=True)
