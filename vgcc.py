@@ -27,9 +27,10 @@ from eom.eom_factory import get_eom
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s')
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
+
 
 class Config:
     """
@@ -37,31 +38,33 @@ class Config:
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        self.tau_0: float = config.get('tau_0', 1.0)
-        self.tau_f: float = config.get('tau_f', 1.6)
-        self.tau_step: float = config.get('tau_step', 0.10)
-        self.x_min: float = config.get('x_min', -5.0)
-        self.x_max: float = config.get('x_max', 5.0)
-        self.x_step: float = config.get('x_step', 0.05)
-        self.y_min: float = config.get('y_min', -5.0)
-        self.y_max: float = config.get('y_max', 5.0)
-        self.y_step: float = config.get('y_step', 0.05)
-        self.eta_min: float = config.get('eta_min', -0.1)
-        self.eta_max: float = config.get('eta_max', 0.1)
-        self.step_eta: float = config.get('stepEta', 0.1)
-        self.T_hat_0: float = config.get('T_hat_0', 1.20)
-        self.pi_bar_hat_0: float = config.get('pi_bar_hat_0', 0.0)
-        self.muB_hat_0: float = config.get('muB_hat_0', 1e-20)
-        self.muS_hat_0: float = config.get('muS_hat_0', 1e-20)
-        self.muQ_hat_0: float = config.get('muQ_hat_0', 1e-20)
-        self.T_ast: float = config.get('T_ast', 1.000)
-        self.muB_ast: float = config.get('muB_ast', 1.00)
-        self.muS_ast: float = config.get('muS_ast', 1.00)
-        self.muQ_ast: float = config.get('muQ_ast', 1.00)
-        self.ETA_OVER_S: float = config.get('eta_over_s', 0.20)
-        self.CTAUR: float = config.get('CTAUR', 5.0)
-        self.q: float = config.get('q', 1.0)
-        self.output_dir: str = config.get('output_dir', "data/output/analytic_solutions")
+        self.tau_0: float = config.get("tau_0", 1.0)
+        self.tau_f: float = config.get("tau_f", 1.6)
+        self.tau_step: float = config.get("tau_step", 0.10)
+        self.x_min: float = config.get("x_min", -5.0)
+        self.x_max: float = config.get("x_max", 5.0)
+        self.x_step: float = config.get("x_step", 0.05)
+        self.y_min: float = config.get("y_min", -5.0)
+        self.y_max: float = config.get("y_max", 5.0)
+        self.y_step: float = config.get("y_step", 0.05)
+        self.eta_min: float = config.get("eta_min", -0.1)
+        self.eta_max: float = config.get("eta_max", 0.1)
+        self.step_eta: float = config.get("stepEta", 0.1)
+        self.T_hat_0: float = config.get("T_hat_0", 1.20)
+        self.pi_bar_hat_0: float = config.get("pi_bar_hat_0", 0.0)
+        self.muB_hat_0: float = config.get("muB_hat_0", 1e-20)
+        self.muS_hat_0: float = config.get("muS_hat_0", 1e-20)
+        self.muQ_hat_0: float = config.get("muQ_hat_0", 1e-20)
+        self.T_ast: float = config.get("T_ast", 1.000)
+        self.muB_ast: float = config.get("muB_ast", 1.00)
+        self.muS_ast: float = config.get("muS_ast", 1.00)
+        self.muQ_ast: float = config.get("muQ_ast", 1.00)
+        self.ETA_OVER_S: float = config.get("eta_over_s", 0.20)
+        self.CTAUR: float = config.get("CTAUR", 5.0)
+        self.q: float = config.get("q", 1.0)
+        self.output_dir: str = config.get(
+            "output_dir", "data/output/analytic_solutions"
+        )
 
     @classmethod
     def from_yaml(cls, path: str = "config.yaml") -> "Config":
@@ -90,7 +93,9 @@ def setup_initial_conditions(cfg: Config) -> np.ndarray:
         np.ndarray: An array of initial conditions.
     """
     logger.debug(f"Setting up initial conditions from configuration file.")
-    return np.array([cfg.T_hat_0, cfg.muB_hat_0, cfg.muS_hat_0, cfg.muQ_hat_0, cfg.pi_bar_hat_0])
+    return np.array(
+        [cfg.T_hat_0, cfg.muB_hat_0, cfg.muS_hat_0, cfg.muQ_hat_0, cfg.pi_bar_hat_0]
+    )
 
 
 def setup_eos_parameters(cfg: Config) -> Dict[str, Union[float, np.ndarray]]:
@@ -105,8 +110,8 @@ def setup_eos_parameters(cfg: Config) -> Dict[str, Union[float, np.ndarray]]:
     """
     logger.debug(f"Setting up EoS parameters from configuration file.")
     eos_params = {
-        'T_ast': cfg.T_ast,
-        'mu_ast': np.array([cfg.muB_ast, cfg.muS_ast, cfg.muQ_ast]),
+        "T_ast": cfg.T_ast,
+        "mu_ast": np.array([cfg.muB_ast, cfg.muS_ast, cfg.muQ_ast]),
     }
     return eos_params
 
@@ -122,14 +127,11 @@ def setup_eom_parameters(cfg: Config) -> Dict[str, float]:
         Dict[str, float]: Dictionary of EoM parameters.
     """
     logger.debug(f"Setting up EoM parameters from configuration file.")
-    eom_params = {'CTAUR': cfg.CTAUR, 'ETA_OVER_S': cfg.ETA_OVER_S}
+    eom_params = {"CTAUR": cfg.CTAUR, "ETA_OVER_S": cfg.ETA_OVER_S}
     return eom_params
 
 
-def solve_equations(
-        initial_conditions: np.ndarray, 
-        eom_instance: Any
-        ) -> tuple:
+def solve_equations(initial_conditions: np.ndarray, eom_instance: Any) -> tuple:
     """
     Solve the equations of motion using the provided EoM instance.
     Returns interpolation functions for T, mu, and pi.
@@ -165,11 +167,9 @@ def solve_equations(
     return T_hat_interp, mu_hat_interp, pi_bar_hat_interp
 
 
-def output_solution(cfg: Config, 
-                    solutions: tuple,
-                    eom_instance: Any, 
-                    mode: str
-                    ) -> None:
+def output_solution(
+    cfg: Config, solutions: tuple, eom_instance: Any, mode: str
+) -> None:
     """
     Generate output files for either initial conditions (single time step) or the
     entire evolution (multiple time steps).
@@ -192,20 +192,24 @@ def output_solution(cfg: Config,
     # Create output directory
     dir_path = Path(cfg.output_dir).absolute()
     dir_path.mkdir(parents=True, exist_ok=True)
-    
+
     # Determine the time steps based on the mode.
-    time_steps = [cfg.tau_0] if mode == "initial_condition" else np.arange(cfg.tau_0, cfg.tau_f, cfg.tau_step)
-    
+    time_steps = (
+        [cfg.tau_0]
+        if mode == "initial_condition"
+        else np.arange(cfg.tau_0, cfg.tau_f, cfg.tau_step)
+    )
+
     # Use tqdm to display progress bar.
     iterator = tqdm(
-        time_steps, 
-        desc="Progress", 
-        position=0, 
-        leave=False, 
-        bar_format='{l_bar}{bar:40} | [Elapsed:{elapsed} | Remaining:{remaining}]', 
-        colour='green'
-        )
-    
+        time_steps,
+        desc="Progress",
+        position=0,
+        leave=False,
+        bar_format="{l_bar}{bar:40} | [Elapsed:{elapsed} | Remaining:{remaining}]",
+        colour="green",
+    )
+
     # Loop over each time step.
     for tau in iterator:
         rows = []
@@ -219,7 +223,7 @@ def output_solution(cfg: Config,
                     q=cfg.q,
                     interpolated_T_hat=T_hat_interp,
                     interpolated_mu_hat=mu_hat_interp,
-                    eos_instance=eom_instance.eos
+                    eos_instance=eom_instance.eos,
                 )
                 nums = milne_number(
                     tau=tau,
@@ -228,7 +232,7 @@ def output_solution(cfg: Config,
                     q=cfg.q,
                     interpolated_T_hat=T_hat_interp,
                     interpolated_mu_hat=mu_hat_interp,
-                    eos_instance=eom_instance.eos
+                    eos_instance=eom_instance.eos,
                 )
                 pis = milne_pi(
                     tau=tau,
@@ -238,7 +242,7 @@ def output_solution(cfg: Config,
                     interpolated_T_hat=T_hat_interp,
                     interpolated_mu_hat=mu_hat_interp,
                     interpolated_pi_bar_hat=pi_bar_hat_interp,
-                    eos_instance=eom_instance.eos
+                    eos_instance=eom_instance.eos,
                 )
                 row = [
                     x,
@@ -260,25 +264,39 @@ def output_solution(cfg: Config,
                     pis[3],
                 ]
                 rows.append(row)
-        
+
         # Temporarily store output in a DataFrame.
         columns = [
-            "x", "y", "eta", "energy", "num1", "num2", "num3",
-            "u_x", "u_y", "u_eta", "bulk", "pi_xx", "pi_xy",
-            "pi_xeta", "pi_yy", "pi_yeta", "pi_etaeta"
+            "x",
+            "y",
+            "eta",
+            "energy",
+            "num1",
+            "num2",
+            "num3",
+            "u_x",
+            "u_y",
+            "u_eta",
+            "bulk",
+            "pi_xx",
+            "pi_xy",
+            "pi_xeta",
+            "pi_yy",
+            "pi_yeta",
+            "pi_etaeta",
         ]
         df = pd.DataFrame(rows, columns=columns)
-        header_str = f'#0 {cfg.x_step} {cfg.y_step} {cfg.step_eta} 0 {cfg.x_min} {cfg.y_min} {cfg.eta_min}\n'
+        header_str = f"#0 {cfg.x_step} {cfg.y_step} {cfg.step_eta} 0 {cfg.x_min} {cfg.y_min} {cfg.eta_min}\n"
         # Define formatters for the output.
         fmt = {col: (lambda x: f"{x:12.6f}") for col in columns}
         out_str = df.to_string(index=False, header=False, formatters=fmt)
-        
+
         # Choose the file name based on mode and time step.
         if mode == "initial_condition":
             file_name = "VGCC_initial_condition.dat"
         else:
-            file_name = f'VGCC_tau={tau:.2f}.dat'
-        
+            file_name = f"VGCC_tau={tau:.2f}.dat"
+
         # Write the output to a file.
         file_path = dir_path / file_name
         with open(file_path, "w", encoding="utf-8") as f:
@@ -294,23 +312,29 @@ def parse_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Parsed command-line arguments.
     """
-    parser = argparse.ArgumentParser(prog="VISCOUS GUBSER FLOW WITH CONSERVED CHARGES (VGCC)", 
-                                     description="""Solve the equations of motion for viscous
+    parser = argparse.ArgumentParser(
+        prog="VISCOUS GUBSER FLOW WITH CONSERVED CHARGES (VGCC)",
+        description="""Solve the equations of motion for viscous
                                                     Gubser flow with conserved charges.""",
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                     epilog="Developed by the UIUC Nuclear Theory Group.")
-    parser.add_argument("--config", 
-                        default="config.yaml", 
-                        help="path to config YAML file")
-    parser.add_argument("--mode", default="initial_condition",
-                        choices=["initial_condition", "evolution"],
-                        help="mode to run: initial_condition or evolution")
-    parser.add_argument("--eos", default="EoS2",
-                        choices=["EoS1", "EoS2"],
-                        help="type of equation of state to use")
-    parser.add_argument("--debug",
-                        action="store_true", 
-                        help="enable debug logging")
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        epilog="Developed by the UIUC Nuclear Theory Group.",
+    )
+    parser.add_argument(
+        "--config", default="config.yaml", help="path to config YAML file"
+    )
+    parser.add_argument(
+        "--mode",
+        default="initial_condition",
+        choices=["initial_condition", "evolution"],
+        help="mode to run: initial_condition or evolution",
+    )
+    parser.add_argument(
+        "--eos",
+        default="EoS2",
+        choices=["EoS1", "EoS2"],
+        help="type of equation of state to use",
+    )
+    parser.add_argument("--debug", action="store_true", help="enable debug logging")
     return parser.parse_args()
 
 
@@ -325,7 +349,7 @@ def main() -> None:
 
     # Print script header.
     print_header()
-    
+
     # Load the configuration file.
     logger.debug(f"Loading configuration from {args.config}.")
     try:
@@ -337,7 +361,7 @@ def main() -> None:
     # Setup EoS and EoM parameters.
     eos_params = setup_eos_parameters(cfg)
     eom_params = setup_eom_parameters(cfg)
-    
+
     # Create the corresponding EoM instance using the selected EoS type.
     try:
         eom_instance = get_eom(args.eos, eos_params=eos_params, eom_params=eom_params)
@@ -347,13 +371,13 @@ def main() -> None:
 
     # Setup initial conditions.
     initial_conditions = setup_initial_conditions(cfg)
-    
+
     # Solve the equations of motion.
     solutions = solve_equations(initial_conditions, eom_instance)
-    
+
     # Generate output based on the selected mode.
     output_solution(cfg, solutions, eom_instance, mode=args.mode)
-    
+
     logger.info("Computation complete.")
 
 
