@@ -11,7 +11,7 @@ gq = 4 * Nc * Nf
 ALPHA = gQCD * sigma
 BETA = gq
 BETA1 = BETA / 216
-BETA2 = BETA / (324 * np.pi ** 2)
+BETA2 = BETA / (3888 * np.pi ** 2)
 
 class MasslessQGPEoS(BaseEoS):
     """

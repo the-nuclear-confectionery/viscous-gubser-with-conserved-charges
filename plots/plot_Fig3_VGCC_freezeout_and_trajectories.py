@@ -383,7 +383,7 @@ def plot_hypersurface(
     )
 
     if draw_colorbar:
-        norm = Normalize(vmin=2, vmax=9)
+        norm = Normalize(vmin=4.5, vmax=8.5)
         s = ScalarMappable(norm=norm, cmap=heat_map)
         cax = fig.colorbar(s, ax=ax, orientation="vertical", pad=0.02, format="%.2f").ax
         cax.yaxis.set_ticks(np.linspace(min_s, max_s, 7))
@@ -479,7 +479,7 @@ def plot_ideal_trajectories(
 def parse_args() -> argparse.Namespace:
     """Parses command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Plot Fig5 CCAKE vs VGCC: hypersurface."
+        description="Plot Fig3 VGCC freezeout and trajectories."
     )
     parser.add_argument(
         "--config", default="config.yaml", help="Path to the config YAML file"
@@ -542,8 +542,8 @@ def main():
         norm_scale,
     )
 
-    # Plot hypersurface for mu/T = 7
-    initial_conditions = np.array([cfg.T_hat_0, 7 * cfg.T_hat_0, 0, 0, 0])
+    # Plot hypersurface for mu/T = 10
+    initial_conditions = np.array([cfg.T_hat_0, 10 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     plot_hypersurface(
         args,
@@ -557,8 +557,8 @@ def main():
         norm_scale,
     )
 
-    # Plot hypersurface for mu/T = 9
-    initial_conditions = np.array([cfg.T_hat_0, 9 * cfg.T_hat_0, 0, 0, 0])
+    # Plot hypersurface for mu/T = 15
+    initial_conditions = np.array([cfg.T_hat_0, 15 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     plot_hypersurface(
         args,
@@ -573,8 +573,8 @@ def main():
         draw_colorbar=True,
     )
 
-    # Plot trajectories for mu/T = 7
-    initial_conditions = np.array([cfg.T_hat_0, 7 * cfg.T_hat_0, 0, 0, 0])
+    # Plot trajectories for mu/T = 10
+    initial_conditions = np.array([cfg.T_hat_0, 10 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     # plot_trajectories(args, cfg, fig, ax[1], solutions, eom_instance, initial_conditions, e_freezeout)
     ideal_solutions = solve_equations(
@@ -657,7 +657,7 @@ def main():
     mus = milne_mu(2.0, xs, 1.0, solutions[1][0])
     Ts = milne_T(2.0, xs, 1.0, solutions[0])
     ax[1].text(
-        mus[0] + 0.1, Ts[0] - 0.01, r"$\tau_2$", fontsize=10, color="blue", ha="left"
+        mus[0] + 0.1, Ts[0] - 0.02, r"$\tau_2$", fontsize=10, color="blue", ha="left"
     )
     ax[1].plot(mus, Ts, lw=1, color="blue", ls="dotted", zorder=8)
 
@@ -690,23 +690,23 @@ def main():
     ax[1].plot(mus, Ts, lw=1, color="red", ls="solid", zorder=9)
 
     ax[1].text(
-        2.55, 0.13, r"$x_0=0.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
+        3.9, 0.13, r"$x_0=0.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
     )
     ax[1].text(
-        2.55, 0.10, r"$x_1=1.5\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
+        3.9, 0.10, r"$x_1=1.5\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
     )
     ax[1].text(
-        2.55, 0.07, r"$x_2=2.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
+        3.9, 0.07, r"$x_2=2.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
     )
     ax[1].text(
-        2.55, 0.04, r"$x_3=3.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
+        3.9, 0.04, r"$x_3=3.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
     )
     ax[1].text(
-        2.55, 0.01, r"$x_4=4.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
+        3.9, 0.01, r"$x_4=4.0\;\mathrm{fm}$", fontsize=10, color="r", ha="right"
     )
 
-    # Plot trajectories for mu/T = 9
-    initial_conditions = np.array([cfg.T_hat_0, 9 * cfg.T_hat_0, 0, 0, 0])
+    # Plot trajectories for mu/T = 15
+    initial_conditions = np.array([cfg.T_hat_0, 15 * cfg.T_hat_0, 0, 0, 0])
     solutions = solve_equations(initial_conditions, eom_instance)
     # plot_trajectories(args, cfg, fig, ax[2], solutions, eom_instance, initial_conditions, e_freezeout)
     ideal_solutions = solve_equations(
@@ -739,7 +739,7 @@ def main():
     mus = milne_mu(2.0, xs, 1.0, solutions[1][0])
     Ts = milne_T(2.0, xs, 1.0, solutions[0])
     ax[2].text(
-        mus[0] + 0.1, Ts[0] - 0.01, r"$\tau_2$", fontsize=10, color="blue", ha="left"
+        mus[0] + 0.1, Ts[0] - 0.02, r"$\tau_2$", fontsize=10, color="blue", ha="left"
     )
     ax[2].plot(
         mus, Ts, lw=1, color="blue", ls="dotted", zorder=8, label="Fixed proper time"
@@ -777,13 +777,13 @@ def main():
     ax[2].plot(mus, Ts, lw=1, color="red", ls="solid", zorder=9, label="Fixed position")
 
     ax[1].text(
-        1.05, 0.375, r"$\tau_0=1.0\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
+        0.05, 0.42, r"$\tau_0=1.0\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
     )
     ax[1].text(
-        1.05, 0.345, r"$\tau_1=1.2\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
+        0.05, 0.39, r"$\tau_1=1.2\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
     )
     ax[1].text(
-        1.05, 0.315, r"$\tau_2=2.0\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
+        0.05, 0.36, r"$\tau_2=2.0\;\mathrm{fm}/c$", fontsize=10, color="b", ha="left"
     )
 
     ax[2].legend(loc="lower right", fontsize=10, frameon=False, handlelength=1.5)
@@ -792,27 +792,28 @@ def main():
         ax=ax[0],
         x_title=r"$\displaystyle r$ [fm]",
         y_title=r"$\displaystyle\tau_\mathrm{FO}$ [fm/$c$]",
-        xlim=(-0.2, 5.2),
+        xlim=(-0.2, 6.2),
         ylim=(-0.2, 4.2),
     )
-    ax[0].text(0.00, 1.10, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$", fontsize=10)
-    ax[0].text(1.05, 1.95, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=7$", fontsize=10)
-    ax[0].text(3.3, 3.4, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=9$", fontsize=10)
+    ax[0].text(2.60, 0.55, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$", fontsize=10)
+    ax[0].text(2.95, 2.1, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=10$", fontsize=10)
+    ax[0].text(3.60, 3.25, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=15$", fontsize=10)
 
     customize_axis(
         ax=ax[1],
         x_title=r"$\displaystyle \mu_Y$ [GeV]",
         y_title=r"$\displaystyle T$ [GeV]",
-        xlim=(-0.1, 2.7),
-        ylim=(-0.01, 0.41),
+        xlim=(-0.2, 4.2),
+        ylim=(-0.02, 0.52),
     )
 
-    ax[1].text(1.85, 0.25, "$\displaystyle s/n_Y=\\; $const.", rotation=42, fontsize=10)
+    ax[1].text(2.7, 0.25, "$\displaystyle s/n_Y=\\; $const.", rotation=38, fontsize=10)
     ax[1].text(
-        0.06,
-        0.82,
-        r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=7$",
+        0.95,
+        0.91,
+        r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=10$",
         fontsize=10,
+        ha='right',
         transform=ax[1].transAxes,
     )
 
@@ -820,15 +821,16 @@ def main():
         ax=ax[2],
         x_title=r"$\displaystyle \mu_Y$ [GeV]",
         y_title=r"$\displaystyle T$ [GeV]",
-        xlim=(-0.1, 2.7),
-        ylim=(-0.01, 0.41),
+        xlim=(-0.2, 4.2),
+        ylim=(-0.02, 0.52),
     )
 
     ax[2].text(
-        0.06,
-        0.82,
-        r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=9$",
+        0.95,
+        0.91,
+        r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=15$",
         fontsize=10,
+        ha='right',
         transform=ax[2].transAxes,
     )
     for name, label in zip(range(3), ["a", "b", "c"]):
@@ -850,8 +852,8 @@ def main():
             horizontalalignment="center",
         )
 
-    ax[1].set_aspect(6.428, anchor="SW")
-    ax[2].set_aspect(6.428, anchor="SW")
+    # ax[1].set_aspect(6.428, anchor="SW")
+    # ax[2].set_aspect(6.428, anchor="SW")
     fig.tight_layout()
     output_file = output_dir / "Fig3_VGCC-freezeout_and_trajectories.pdf"
     fig.savefig(output_file)

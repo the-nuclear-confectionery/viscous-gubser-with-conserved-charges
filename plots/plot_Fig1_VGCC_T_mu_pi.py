@@ -420,7 +420,7 @@ def main() -> None:
     # Second set (moderate μ)
     # Setup initial conditions.
     initial_conditions = np.array(
-        [cfg.T_hat_0, 7 * cfg.T_hat_0, 0.0, 0.0, cfg.pi_bar_hat_0]
+        [cfg.T_hat_0, 10 * cfg.T_hat_0, 0.0, 0.0, cfg.pi_bar_hat_0]
     )
     # Solve the equations of motion.
     solutions = solve_equations(initial_conditions, eom_instance)
@@ -441,7 +441,7 @@ def main() -> None:
     # Third set (high μ)
     # Setup initial conditions.
     initial_conditions = np.array(
-        [cfg.T_hat_0, 9 * cfg.T_hat_0, 0.0, 0.0, cfg.pi_bar_hat_0]
+        [cfg.T_hat_0, 15 * cfg.T_hat_0, 0.0, 0.0, cfg.pi_bar_hat_0]
     )
     # Solve the equations of motion.
     solutions = solve_equations(initial_conditions, eom_instance)
@@ -465,7 +465,7 @@ def main() -> None:
         x_title="",
         y_title=r"$\displaystyle T(\tau, x)$ [GeV]",
         no_xnums=True,
-        ylim=(0.02, 0.38),
+        ylim=(-0.02, 0.42),
     )
     customize_axis(
         ax=ax1[MU_PLOT],
@@ -482,7 +482,7 @@ def main() -> None:
         ax=ax1[PIXY_PLOT],
         x_title=r"$\displaystyle x$ [fm]",
         y_title=r"$\displaystyle\pi^{xy}(\tau, x) / w(\tau, x)$",
-        ylim=(-0.85, 0.1),
+        ylim=(-0.35, 0.05),
     )
     ax1[T_PLOT].legend(loc="upper right", fontsize=10)
     ax1[MU_PLOT].legend(loc="upper right", fontsize=10)
