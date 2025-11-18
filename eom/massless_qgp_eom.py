@@ -35,7 +35,7 @@ class MasslessQGPEoM(BaseEoM):
         s = self.eos.entropy(T, mu)
         return self.CTAUR * self.ETA_OVER_S * s / (e + p)
 
-    # Eq. (22a) in the paper
+    # Eq. (20a) in the paper
     def dT_drho(self, ys: np.ndarray, rho_value: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         T_hat, muB_hat, muS_hat, muQ_hat, pi_hat = ys
         mu_hat = np.array([muB_hat, muS_hat, muQ_hat])
@@ -44,7 +44,7 @@ class MasslessQGPEoM(BaseEoM):
         ret_val *= (- 2 / 3) * np.tanh(rho_value) * T_hat
         return ret_val
 
-    # Eq. (22b) in the paper
+    # Eq. (20b) in the paper
     def dmu_drho(self, ys: np.ndarray, rho_value: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         T_hat, muB_hat, muS_hat, muQ_hat, pi_hat = ys
         mu_hat = np.array([muB_hat, muS_hat, muQ_hat])
