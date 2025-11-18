@@ -1,6 +1,6 @@
 # Equation of State
 
-The VGCC script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRD **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2502:XXXX [nucl-th]]() for details.
+The VGCC script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRC **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503:20021 [nucl-th]](https://arxiv.org/abs/2503.20021) for details.
 
 Two equations of state are implemented here:
 

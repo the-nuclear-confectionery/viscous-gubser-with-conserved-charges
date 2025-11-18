@@ -12,7 +12,7 @@ This repository provides tools to generate semi-analytical solutions for Gubser 
 
 For theoretical details, see:
 - K. Ingles, J. Salinas San Martín, W. Serenone, and J. Noronha-Hostler,
- _Viscous Gubser flow with conserved charges to benchmark fluid simulations_, [Phys. Rev. D **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021).
+ _Viscous Gubser flow with conserved charges to benchmark fluid simulations_, [Phys. Rev. C **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021).
 
 ## Features
 - Semi-analytical solutions for Gubser flow with BSQ conserved charges
@@ -54,7 +54,7 @@ config: config.yaml
 
 ### Equation of State
 
-The script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRD **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) for details.
+The script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRC **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) for details.
 
 Current options are `EoS1` (massless QGP) and `EoS2` (conformal plasma).
 The details of the equations of state included by default and instructions on how to implement a custom EoS are given in the [eos](eos) folder.
@@ -65,7 +65,7 @@ The parameters used for solving the hydrodynamics equations of viscous Gubser fl
 
 ## Plotting tools
 
-Visualization scripts used to generate the figures of [PRD **\<VOLUME NO.>**, \<IDENTIFIER> (2025)](), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) are provided on the [plots](plots) directory.
+Visualization scripts used to generate the figures of [PRC **\<VOLUME NO.>**, \<IDENTIFIER> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) are provided on the [plots](plots) directory.
 
 ## Citation
 

@@ -1,7 +1,7 @@
 # Plotting scripts
 
 ## Usage
-The following scripts were used to produce the figures in [PRD **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](), [arXiv:2502:XXXX [nucl-th]](). The scripts all together using the [plot_vgcc.py](), i.e., running the command
+The following scripts were used to produce the figures in [PRC **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503:20021 [nucl-th]](https://arxiv.org/abs/2503.20021). The scripts all together using the [plot_vgcc.py](), i.e., running the command
 
 ```terminal
 python plot_vgcc.py
