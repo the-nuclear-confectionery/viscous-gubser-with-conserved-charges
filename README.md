@@ -71,14 +71,14 @@ Visualization scripts used to generate the figures of [PRC **\<VOLUME NO.>**, \<
 
 If you use this code, please cite:
 ```bibtex
-@misc{ingles2025viscousgubserflowconserved,
-      title={Viscous Gubser flow with conserved charges to benchmark fluid simulations}, 
-      author={Kevin Ingles and Jordi Salinas San Martín and Willian Serenone and Jacquelyn Noronha-Hostler},
-      year={2025},
-      eprint={2503.20021},
-      archivePrefix={arXiv},
-      primaryClass={nucl-th},
-      url={https://arxiv.org/abs/2503.20021}, 
+@article{Ingles:2025yrv,
+    author = "Ingles, Kevin and Salinas San Mart{\'\i}n, Jordi and Serenone, Willian and Noronha-Hostler, Jacquelyn",
+    title = "{Viscous Gubser flow with conserved charges to benchmark fluid simulations}",
+    eprint = "2503.20021",
+    archivePrefix = "arXiv",
+    primaryClass = "nucl-th",
+    month = "3",
+    year = "2025"
 }
 ```
 
