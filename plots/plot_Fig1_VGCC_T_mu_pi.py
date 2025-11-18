@@ -464,25 +464,27 @@ def main() -> None:
         ax=ax1[T_PLOT],
         x_title="",
         y_title=r"$\displaystyle T(\tau, x)$ [GeV]",
-        no_xnums=True,
+        no_xnums=False,
         ylim=(-0.02, 0.42),
     )
     customize_axis(
         ax=ax1[MU_PLOT],
         x_title="",
         y_title=r"$\displaystyle\mu_Y(\tau, x)$ [GeV]",
-        no_xnums=True,
+        no_xnums=False,
     )
     customize_axis(
         ax=ax1[PIYY_PLOT],
         x_title=r"$\displaystyle x$ [fm]",
         y_title=r"$\displaystyle\pi^{yy}(\tau, x) / w(\tau, x)$",
+        xlim=(-6, 6),
     )
     customize_axis(
         ax=ax1[PIXY_PLOT],
         x_title=r"$\displaystyle x$ [fm]",
         y_title=r"$\displaystyle\pi^{xy}(\tau, x) / w(\tau, x)$",
         ylim=(-0.35, 0.05),
+        xlim=(-6, 6),
     )
     ax1[T_PLOT].legend(loc="upper right", fontsize=10)
     ax1[MU_PLOT].legend(loc="upper right", fontsize=10)
