@@ -2,9 +2,12 @@
 A Python implementation of semi-analytical solutions for Gubser flow with conserved charges (baryon number $B$, strangeness $S$, and electric charge $Q$) for benchmarking relativistic fluid simulations.
 
 [![License: GPL v3](https://img.shields.io/badge/License-University_of_Illinois/NCSA_Open_Source-blue.svg)](https://spdx.org/licenses/NCSA.html)
+[![DOI](https://zenodo.org/badge/954478331.svg)](https://doi.org/10.5281/zenodo.18397955)
+
 <p align="center">
 <img src="utils/VGCC_evolution.png" alt="logo" width="700"/>
 </p>
+
 
 ## Overview
 
