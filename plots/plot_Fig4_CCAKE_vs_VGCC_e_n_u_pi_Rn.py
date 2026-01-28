@@ -310,11 +310,11 @@ def beautify():
     ax["e"].plot([], [], **analytical_style, label="Semi-analytical", color=cmap(0))
     ax["e"].scatter([], [], label=r"\textsc{CCAKE}", edgecolors=cmap(0))
     ax["e"].text(
-        0.75,
-        0.90,
+        0.72,
+        0.89,
         r"\textsc{EoS2}",
         transform=ax["e"].transAxes,
-        fontsize=10,
+        fontsize=14,
         bbox={"facecolor": "white", "boxstyle": "round", "linewidth": 0.5},
         horizontalalignment="center",
     )
@@ -327,7 +327,7 @@ def beautify():
     for name, label in zip(ylabels.keys(), ["a", "b", "c", "d", "e", "f"]):
         if label in ["a", "b", "c"]:
             xpos = 0.92
-            ypos = 0.90
+            ypos = 0.89
         else:
             xpos = 0.92
             ypos = 0.06
@@ -336,15 +336,15 @@ def beautify():
             ypos,
             f"({label})",
             transform=ax[name].transAxes,
-            fontsize=12,
+            fontsize=14,
             # bbox={'boxstyle': 'round', 'facecolor': 'white'},
             horizontalalignment="center",
         )
 
     leg = ax["e"].legend(
         loc="upper left",
-        fontsize=10,
-        bbox_to_anchor=(0.37, 0.88),
+        fontsize=12,
+        bbox_to_anchor=(0.24, 0.88),
         markerscale=12,
         frameon=False,
     )
