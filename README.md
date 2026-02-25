@@ -1,4 +1,5 @@
 # Viscous Gubser flow with conserved charges (VGCC)
+
 A Python implementation of semi-analytical solutions for Gubser flow with conserved charges (baryon number $B$, strangeness $S$, and electric charge $Q$) for benchmarking relativistic fluid simulations.
 
 [![License: GPL v3](https://img.shields.io/badge/License-University_of_Illinois/NCSA_Open_Source-blue.svg)](https://spdx.org/licenses/NCSA.html)
@@ -8,29 +9,33 @@ A Python implementation of semi-analytical solutions for Gubser flow with conser
 <img src="utils/VGCC_evolution.png" alt="logo" width="700"/>
 </p>
 
-
 ## Overview
 
 This repository provides tools to generate semi-analytical solutions for Gubser flow with conserved charges. These solutions can serve as benchmarks for relativistic viscous hydrodynamics codes.
 
 For theoretical details, see:
+
 - K. Ingles, J. Salinas San Martín, W. Serenone, and J. Noronha-Hostler,
- _Viscous Gubser flow with conserved charges to benchmark fluid simulations_, [Phys. Rev. C **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021).
+ _Viscous Gubser flow with conserved charges to benchmark fluid simulations_, [Phys. Rev. C **113** (2026) 2, 024915 (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021).
 
 ## Features
+
 - Semi-analytical solutions for Gubser flow with BSQ conserved charges
-- Compatible with the [CCAKE](https://github.com/the-nuclear-confectionery/CCAKE) hydrodynamics code; see details [here](https://inspirehep.net/literature/2787415)
+- Compatible with the [CCAKE](https://github.com/the-nuclear-confectionery/CCAKE) hydrodynamics code; see details here: [InspireHEP entry](https://inspirehep.net/literature/2787415)
 - Support for multiple equations of state
 - Customizable parameters via YAML configuration
 
 ## Installation
+
 1. Clone the repository:
+
 ```terminal
 git clone git@github.com:the-nuclear-confectionery/viscous-gubser-with-conserved-charges.git
 cd viscous-gubser-with-conserved-charges
 ```
 
 2. Install dependencies:
+
 ```terminal
 pip install numpy matplotlib scipy pandas tqdm
 ```
@@ -38,11 +43,13 @@ pip install numpy matplotlib scipy pandas tqdm
 ## Usage
 
 To generate the solutions of Gubser flow with conserved charges, execute in the terminal the following command:
+
 ```terminal
 python vgcc.py [-h] [--config <FILE>] [--mode <{initial_condition,evolution}>] [--eos <{EoS1,EoS2}>]  [--debug]
 ```
 
 where the default arguments are:
+
 ```terminal
 mode: initial_condition
 eos: EoS2
@@ -57,7 +64,7 @@ config: config.yaml
 
 ### Equation of State
 
-The script provides the flexibility of changing and implementing different equations of state (EoS); please see [PRC **\<VOLUME NO.\>**, \<IDENTIFIER\> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) for details.
+The script provides the flexibility of changing and implementing different equations of state (EoS); please see [Phys. Rev. C **113** (2026) 2, 024915 (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) for details.
 
 Current options are `EoS1` (massless QGP) and `EoS2` (conformal plasma).
 The details of the equations of state included by default and instructions on how to implement a custom EoS are given in the [eos](eos) folder.
@@ -68,7 +75,7 @@ The parameters used for solving the hydrodynamics equations of viscous Gubser fl
 
 ## Plotting tools
 
-Visualization scripts used to generate the figures of [PRC **\<VOLUME NO.>**, \<IDENTIFIER> (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) are provided on the [plots](plots) directory.
+Visualization scripts used to generate the figures of [Phys. Rev. C **113** (2026) 2, 024915 (2025)](https://doi.org/10.1103/v334-d32w), [arXiv:2503.20021 [nucl-th]](https://arxiv.org/abs/2503.20021) are provided on the [plots](plots) directory.
 
 ## Citation
 
@@ -80,8 +87,12 @@ If you use this code, please cite:
     eprint = "2503.20021",
     archivePrefix = "arXiv",
     primaryClass = "nucl-th",
-    month = "3",
-    year = "2025"
+    doi = "10.1103/v334-d32w",
+    journal = "Phys. Rev. C",
+    volume = "113",
+    number = "2",
+    pages = "024915",
+    year = "2026"
 }
 ```
 
