@@ -5,3 +5,6 @@
 **.un~
 
 .DS*
+
+data/output/plots/Fig_CCAKE_2.0_Gubser.pdf
+plots/plot_Fig_CCAKE_2.0_Gubser.py
