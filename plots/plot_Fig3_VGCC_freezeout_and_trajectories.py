@@ -330,10 +330,10 @@ def plot_hypersurface(
     Plot the hypersurface of the freeze-out surface.
     """
     # Define the range of x values.
-    xs = np.linspace(0, 6, 1000)
+    xs = np.linspace(0, 6, 24000)
     muB_hat_0_over_T_hat_0_ratio = initial_conditions[1] / initial_conditions[0]
 
-    skip_size = 8
+    skip_size = 120
     min_s, max_s, min_tau, max_tau, FO_surfaces, FO_entropies, FO_normals = (
         do_freezeout_surfaces(
             xs=xs,
@@ -372,8 +372,8 @@ def plot_hypersurface(
         freezeout_times[::, 0],
         freezeout_times[::, 1],
         c=find_color_indices(
-            min_s=2,
-            max_s=9,
+            min_s=1,
+            max_s=10,
             num_colors=freezeout_s.size,
             s=freezeout_s,
         ),
@@ -383,7 +383,7 @@ def plot_hypersurface(
     )
 
     if draw_colorbar:
-        norm = Normalize(vmin=4.5, vmax=8.5)
+        norm = Normalize(vmin=4.5, vmax=9.0)
         s = ScalarMappable(norm=norm, cmap=heat_map)
         cax = fig.colorbar(s, ax=ax, orientation="vertical", pad=0.02, format="%.2f").ax
         cax.yaxis.set_ticks(np.linspace(min_s, max_s, 7))
@@ -795,9 +795,9 @@ def main():
         xlim=(-0.2, 6.2),
         ylim=(-0.2, 4.2),
     )
-    ax[0].text(2.60, 0.55, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$", fontsize=10)
-    ax[0].text(2.95, 2.1, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=10$", fontsize=10)
-    ax[0].text(3.60, 3.25, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=15$", fontsize=10)
+    ax[0].text(2.20, 0.02, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=0$", fontsize=10)
+    ax[0].text(3.95, 1.05, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=10$", fontsize=10)
+    ax[0].text(3.95, 2.10, r"$\displaystyle \hat{\mu}_{Y,0}/\hat{T}_0=15$", fontsize=10)
 
     customize_axis(
         ax=ax[1],

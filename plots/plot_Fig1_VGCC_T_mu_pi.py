@@ -465,7 +465,7 @@ def main() -> None:
         x_title="",
         y_title=r"$\displaystyle T(\tau, x)$ [GeV]",
         no_xnums=False,
-        ylim=(-0.02, 0.42),
+        ylim=(-0.02, 0.32),
     )
     customize_axis(
         ax=ax1[MU_PLOT],
