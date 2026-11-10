@@ -20,10 +20,10 @@ class MasslessQGPEoM(BaseEoM):
 
     # Eq. (21) in the paper
     def f(self, T, muB):
-        numerator_A = 36 * (np.pi ** 2) * gQCD * (T ** 4)
-        numerator_B = 5 * gq * ((3 * np.pi ** 2) * (muB ** 2) * (T ** 2) + 2 * muB ** 4)
-        denominator_A = 72 * (np.pi ** 2) * gQCD * (T ** 2) * ((np.pi ** 2) * (T ** 2) + 4 * muB ** 2)
-        denominator_B = - 5 * gq * (muB ** 2) * (3 * np.pi ** 2 * T ** 2 - 4 * muB ** 2)
+        numerator_A = 216 * (np.pi ** 4) * gQCD * (T ** 4)
+        numerator_B = 5 * gq * ((18 * np.pi ** 2) * (muB ** 2) * (T ** 2) + 1 * muB ** 4)
+        denominator_A = 144 * (np.pi ** 2) * gQCD * (T ** 2) * ((3 * np.pi ** 2) * (T ** 2) + 1 * muB ** 2)
+        denominator_B = - 10 * gq * (muB ** 2) * (9 * np.pi ** 2 * T ** 2 - 1 * muB ** 2)
         numerator = numerator_A + numerator_B
         denominator = denominator_A + denominator_B
         return numerator / denominator
@@ -39,7 +39,7 @@ class MasslessQGPEoM(BaseEoM):
     def dT_drho(self, ys: np.ndarray, rho_value: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         T_hat, muB_hat, muS_hat, muQ_hat, pi_hat = ys
         mu_hat = np.array([muB_hat, muS_hat, muQ_hat])
-        ret_val = 1 + (4 / np.pi ** 2) * ((muB_hat / T_hat) ** 2)
+        ret_val = 1 + (1 / (3 * np.pi ** 2)) * ((muB_hat / T_hat) ** 2)
         ret_val = 1 - ret_val * self.f(T_hat, muB_hat) * pi_hat
         ret_val *= (- 2 / 3) * np.tanh(rho_value) * T_hat
         return ret_val
